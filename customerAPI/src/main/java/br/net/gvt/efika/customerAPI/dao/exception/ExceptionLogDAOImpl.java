@@ -11,7 +11,7 @@ import br.net.gvt.efika.mongo.dao.AbstractMongoDAO;
 public class ExceptionLogDAOImpl extends AbstractMongoDAO<ExceptionLog> {
 
     public ExceptionLogDAOImpl() {
-        super("10.200.35.67", "customerAPI", ExceptionLog.class);
+        super(MongoEndpointEnum.MONGO.getIp(), "customerAPI", ExceptionLog.class);
     }
 
 }
