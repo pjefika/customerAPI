@@ -26,6 +26,7 @@ import br.net.gvt.efika.customerAPI.model.service.certificator.impl.CertifierSer
 import br.net.gvt.efika.customerAPI.model.service.factory.FactoryCertificationBlock;
 import br.net.gvt.efika.customerAPI.model.service.factory.FactoryService;
 import br.net.gvt.efika.customerAPI.model.service.finder.CustomerFinder;
+import br.net.gvt.efika.efika_customer.model.customer.enums.TipoRede;
 import br.net.gvt.efika.fulltest.model.fulltest.FullTest;
 import br.net.gvt.efika.fulltest.model.fulltest.FulltestRequest;
 import br.net.gvt.efika.fulltest.model.fulltest.SetOntToOltRequest;
@@ -51,7 +52,7 @@ public class CertificationServiceImpl implements CertificationService {
         } else {
             cust = req.getCustomer();
         }
-        if (cust.getDesignador() != null) {
+        if (cust.getDesignador() != null && cust.getRede().getTipo() == TipoRede.GPON) {
             Thread assiaGpon = new Thread(new AssiaClearViewRunnable(req.getExecutor(), cust.getDesignador()));
             assiaGpon.start();
         }
