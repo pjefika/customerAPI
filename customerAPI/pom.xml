@@ -155,6 +155,20 @@
             <artifactId>httpclient</artifactId>
             <version>4.5.5</version>
         </dependency>
+        
+        
+        
+        <dependency>
+            <groupId>assia</groupId>
+            <artifactId>clearview</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>assia</groupId>
+            <artifactId>authentication</artifactId>
+            <version>1.0.0</version>
+        </dependency>
 
         
         <!-- https://mvnrepository.com/artifact/junit/junit -->

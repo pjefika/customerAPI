@@ -20,7 +20,6 @@ public class RequestFactory {
     public static CustomerRequest customerRequest(GenericRequest gen) {
         return new CustomerRequest(gen);
     }
-    
 
     public static QueueTaskRequest queueRequest() {
         QueueTaskRequest req = new QueueTaskRequest();
@@ -31,6 +30,10 @@ public class RequestFactory {
             Logger.getLogger(RequestFactory.class.getName()).log(Level.SEVERE, null, ex);
         }
         return req;
+    }
+
+    public static AssiaGponRequest assiaGponRequest() {
+        return new AssiaGponRequestImpl();
     }
 
 }

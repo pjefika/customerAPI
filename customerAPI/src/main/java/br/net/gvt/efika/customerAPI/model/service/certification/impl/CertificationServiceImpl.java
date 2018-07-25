@@ -6,12 +6,15 @@ import br.net.gvt.efika.customer.model.certification.enums.CertificationBlockNam
 import br.net.gvt.efika.customer.model.certification.enums.CertificationResult;
 import br.net.gvt.efika.efika_customer.model.customer.EfikaCustomer;
 import br.net.gvt.efika.customerAPI.dao.mongo.FactoryDAO;
+import br.net.gvt.efika.customerAPI.dao.request.AssiaGponRequest;
+import br.net.gvt.efika.customerAPI.dao.request.RequestFactory;
 import br.net.gvt.efika.customerAPI.model.GenericRequest;
 import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import br.net.gvt.efika.customerAPI.model.entity.ExceptionLog;
+import br.net.gvt.efika.customerAPI.model.service.certification.command.AssiaClearViewRunnable;
 import br.net.gvt.efika.customerAPI.model.service.certification.command.LogCommand;
 import br.net.gvt.efika.customerAPI.model.service.certificator.CertifierCustomerCertificationImpl;
 import br.net.gvt.efika.customerAPI.model.service.certificator.FkIdGenerator;
@@ -47,6 +50,10 @@ public class CertificationServiceImpl implements CertificationService {
             cust = FactoryService.customerFinder().getCustomer(req);
         } else {
             cust = req.getCustomer();
+        }
+        if (cust.getDesignador() != null) {
+            Thread assiaGpon = new Thread(new AssiaClearViewRunnable(req.getExecutor(), cust.getDesignador()));
+            assiaGpon.start();
         }
         this.certification.setCustomer(cust);
         this.certification.setExecutor(req.getExecutor());
