@@ -15,9 +15,9 @@ public abstract class LoggerIn {
 
     public abstract String getAcao();
 
-    public Object getInput() {
-        return this;
-    }
+//    public Object getInput() {
+//        return this;
+//    }
 
     public String getExecutor() {
         return executor;
