@@ -16,10 +16,10 @@ public class AssiaClearViewIn extends LoggerIn {
     public AssiaClearViewIn() {
     }
 
-    @Override
-    public String getAcao() {
-        return "AssiaController.clearViewRealTime";
-    }
+//    @Override
+//    public String getAcao() {
+//        return "AssiaController.clearViewRealTime";
+//    }
 
     public String getDesignador() {
         return designador;

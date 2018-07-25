@@ -13,7 +13,7 @@ public abstract class LoggerIn {
 
     private String executor;
 
-    public abstract String getAcao();
+//    public abstract String getAcao();
 
 //    public Object getInput() {
 //        return this;
