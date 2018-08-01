@@ -6,8 +6,6 @@ import br.net.gvt.efika.customer.model.certification.enums.CertificationBlockNam
 import br.net.gvt.efika.customer.model.certification.enums.CertificationResult;
 import br.net.gvt.efika.efika_customer.model.customer.EfikaCustomer;
 import br.net.gvt.efika.customerAPI.dao.mongo.FactoryDAO;
-import br.net.gvt.efika.customerAPI.dao.request.AssiaGponRequest;
-import br.net.gvt.efika.customerAPI.dao.request.RequestFactory;
 import br.net.gvt.efika.customerAPI.model.GenericRequest;
 import java.util.Calendar;
 import java.util.List;
@@ -35,6 +33,9 @@ import br.net.gvt.efika.fulltest.service.factory.FactoryFulltestService;
 import br.net.gvt.efika.fulltest.model.telecom.properties.gpon.SerialOntGpon;
 import br.net.gvt.efika.fulltest.service.fulltest.FulltestService;
 import br.net.gvt.efika.fulltest.service.config_porta.ConfigPortaService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class CertificationServiceImpl implements CertificationService {
 
@@ -134,6 +135,8 @@ public class CertificationServiceImpl implements CertificationService {
             throw new Exception("Falha ao buscar histórico de execuções.");
         }
     }
+    private ObjectMapper mapper = new ObjectMapper().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES,
+            true);
 
     @Override
     public ValidacaoResult certifyRede(GenericRequest req) throws Exception {
@@ -154,7 +157,8 @@ public class CertificationServiceImpl implements CertificationService {
         } else {
             cust = req.getCustomer();
         }
-        List<SerialOntGpon> ontsDisp = confPortaDAO.ontsDisponiveis(new FulltestRequest(cust, req.getExecutor()));
+        List<SerialOntGpon> ontsDisp = mapper.convertValue(confPortaDAO.ontsDisponiveis(new FulltestRequest(cust, req.getExecutor())), new TypeReference<List<SerialOntGpon>>() {
+        });
 
         return ontsDisp;
     }
