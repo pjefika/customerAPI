@@ -7,11 +7,12 @@ package br.net.gvt.efika.customerAPI.dao.exception;
 
 import br.net.gvt.efika.customerAPI.model.entity.ExceptionLog;
 import br.net.gvt.efika.mongo.dao.AbstractMongoDAO;
+import br.net.gvt.efika.mongo.dao.MongoEndpointEnum;
 
 public class ExceptionLogDAOImpl extends AbstractMongoDAO<ExceptionLog> {
 
     public ExceptionLogDAOImpl() {
-        super("10.200.35.67", "customerAPI", ExceptionLog.class);
+        super(MongoEndpointEnum.MONGO.getIp(), "customerAPI", ExceptionLog.class);
     }
 
 }
