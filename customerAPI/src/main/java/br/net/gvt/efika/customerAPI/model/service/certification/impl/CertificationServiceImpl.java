@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import br.net.gvt.efika.customerAPI.model.entity.ExceptionLog;
+import br.net.gvt.efika.customerAPI.model.service.certification.command.AssiaClearViewRunnable;
 import br.net.gvt.efika.customerAPI.model.service.certification.command.LogCommand;
 import br.net.gvt.efika.customerAPI.model.service.certificator.CertifierCustomerCertificationImpl;
 import br.net.gvt.efika.customerAPI.model.service.certificator.FkIdGenerator;
@@ -23,6 +24,7 @@ import br.net.gvt.efika.customerAPI.model.service.certificator.impl.CertifierSer
 import br.net.gvt.efika.customerAPI.model.service.factory.FactoryCertificationBlock;
 import br.net.gvt.efika.customerAPI.model.service.factory.FactoryService;
 import br.net.gvt.efika.customerAPI.model.service.finder.CustomerFinder;
+import br.net.gvt.efika.efika_customer.model.customer.enums.TipoRede;
 import br.net.gvt.efika.fulltest.model.fulltest.FullTest;
 import br.net.gvt.efika.fulltest.model.fulltest.FulltestRequest;
 import br.net.gvt.efika.fulltest.model.fulltest.SetOntToOltRequest;
@@ -31,6 +33,9 @@ import br.net.gvt.efika.fulltest.service.factory.FactoryFulltestService;
 import br.net.gvt.efika.fulltest.model.telecom.properties.gpon.SerialOntGpon;
 import br.net.gvt.efika.fulltest.service.fulltest.FulltestService;
 import br.net.gvt.efika.fulltest.service.config_porta.ConfigPortaService;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class CertificationServiceImpl implements CertificationService {
 
@@ -47,6 +52,10 @@ public class CertificationServiceImpl implements CertificationService {
             cust = FactoryService.customerFinder().getCustomer(req);
         } else {
             cust = req.getCustomer();
+        }
+        if (cust.getDesignador() != null && cust.getRede().getTipo() == TipoRede.GPON) {
+            Thread assiaGpon = new Thread(new AssiaClearViewRunnable(req.getExecutor(), cust.getDesignador()));
+            assiaGpon.start();
         }
         this.certification.setCustomer(cust);
         this.certification.setExecutor(req.getExecutor());
@@ -126,6 +135,8 @@ public class CertificationServiceImpl implements CertificationService {
             throw new Exception("Falha ao buscar histórico de execuções.");
         }
     }
+    private ObjectMapper mapper = new ObjectMapper().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES,
+            true);
 
     @Override
     public ValidacaoResult certifyRede(GenericRequest req) throws Exception {
@@ -146,7 +157,8 @@ public class CertificationServiceImpl implements CertificationService {
         } else {
             cust = req.getCustomer();
         }
-        List<SerialOntGpon> ontsDisp = confPortaDAO.ontsDisponiveis(new FulltestRequest(cust, req.getExecutor()));
+        List<SerialOntGpon> ontsDisp = mapper.convertValue(confPortaDAO.ontsDisponiveis(new FulltestRequest(cust, req.getExecutor())), new TypeReference<List<SerialOntGpon>>() {
+        });
 
         return ontsDisp;
     }
