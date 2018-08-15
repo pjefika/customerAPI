@@ -39,6 +39,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class CertificationServiceImpl implements CertificationService {
 
+    
     private final CustomerFinder finder = FactoryService.customerFinder();
     private final CustomerCertification certification = FactoryEntitiy.createCustLogCertification();
     private final FulltestService ftDAO = FactoryFulltestService.newFulltestService();
