@@ -2,6 +2,7 @@ package br.net.gvt.efika.customerAPI.model.entity;
 
 import br.net.gvt.efika.customer.model.certification.CertificationBlock;
 import br.net.gvt.efika.customer.model.certification.Certificational;
+import br.net.gvt.efika.customerAPI.model.enums.CertificationType;
 import br.net.gvt.efika.efika_customer.model.customer.EfikaCustomer;
 import br.net.gvt.efika.fulltest.model.fulltest.FullTest;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
@@ -41,6 +42,8 @@ public class CustomerCertification extends Certificational {
     private String executor, fkId;
 
     private FullTest fulltest;
+
+    private CertificationType tipo;
 
     public CustomerCertification() {
         dataInicio = Calendar.getInstance().getTime();
@@ -111,6 +114,14 @@ public class CustomerCertification extends Certificational {
 
     public void setFkId(String fkId) {
         this.fkId = fkId;
+    }
+
+    public CertificationType getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(CertificationType tipo) {
+        this.tipo = tipo;
     }
 
 }

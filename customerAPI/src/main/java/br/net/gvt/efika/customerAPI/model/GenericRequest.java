@@ -1,5 +1,6 @@
 package br.net.gvt.efika.customerAPI.model;
 
+import br.net.gvt.efika.customerAPI.model.enums.CertificationType;
 import br.net.gvt.efika.efika_customer.model.customer.EfikaCustomer;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.Objects;
@@ -13,6 +14,7 @@ public class GenericRequest {
     private String parameter = null;
     private String executor = null;
     private EfikaCustomer customer;
+    private CertificationType tipoCertificao;
 
     public GenericRequest(String parameter, String executor) {
         this.parameter = parameter;
@@ -145,6 +147,14 @@ public class GenericRequest {
 
     public void setCustomer(EfikaCustomer customer) {
         this.customer = customer;
+    }
+
+    public CertificationType getTipoCertificao() {
+        return tipoCertificao;
+    }
+
+    public void setTipoCertificao(CertificationType tipoCertificao) {
+        this.tipoCertificao = tipoCertificao;
     }
 
 }

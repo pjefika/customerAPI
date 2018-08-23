@@ -12,17 +12,18 @@ import br.net.gvt.efika.mongo.dao.AbstractMongoDAO;
 import br.net.gvt.efika.mongo.dao.MongoEndpointEnum;
 import org.bson.types.ObjectId;
 import org.mongodb.morphia.query.FindOptions;
+import org.mongodb.morphia.query.UpdateOperations;
 
 /**
  *
  * @author G0041775
  */
 public class CertificationDAOImpl extends AbstractMongoDAO<CustomerCertification> implements CertificationDAO {
-
+    
     public CertificationDAOImpl() {
         super(MongoEndpointEnum.MONGO.getIp(), "customerAPI", CustomerCertification.class);
     }
-
+    
     @Override
     public List<CustomerCertification> findByCustomer(EfikaCustomer cust) throws Exception {
         return getDatastore().createQuery(CustomerCertification.class)
@@ -32,12 +33,12 @@ public class CertificationDAOImpl extends AbstractMongoDAO<CustomerCertification
                 .asList(new FindOptions()
                         .limit(10));
     }
-
+    
     @Override
     public CustomerCertification read(String id) throws Exception {
         return super.read(new ObjectId(id));
     }
-
+    
     @Override
     public CustomerCertification findByFkId(String fkId) {
         CustomerCertification ret = null;
@@ -47,8 +48,20 @@ public class CertificationDAOImpl extends AbstractMongoDAO<CustomerCertification
                     .equal(fkId).get();
         } catch (Exception e) {
         }
-
+        
         return ret;
     }
+    
+    @Override
+    public CustomerCertification update(CustomerCertification cert, UpdateOperations<CustomerCertification> opers) throws Exception {
+        return super.update(cert, opers);
+    }
 
+    @Override
+    public UpdateOperations<CustomerCertification> createUpdate() throws Exception {
+        return super.createUpdateOperations();
+    }
+    
+    
+    
 }

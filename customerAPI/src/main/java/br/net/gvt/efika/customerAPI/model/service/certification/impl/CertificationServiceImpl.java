@@ -7,16 +7,13 @@ import br.net.gvt.efika.customer.model.certification.enums.CertificationResult;
 import br.net.gvt.efika.efika_customer.model.customer.EfikaCustomer;
 import br.net.gvt.efika.customerAPI.dao.mongo.FactoryDAO;
 import br.net.gvt.efika.customerAPI.model.GenericRequest;
-import java.util.Calendar;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import br.net.gvt.efika.customerAPI.model.entity.ExceptionLog;
+import br.net.gvt.efika.customerAPI.model.entity.operator.CustomerCertificationOperator;
 import br.net.gvt.efika.customerAPI.model.service.certification.command.AssiaClearViewRunnable;
 import br.net.gvt.efika.customerAPI.model.service.certification.command.LogCommand;
-import br.net.gvt.efika.customerAPI.model.service.certificator.CertifierCustomerCertificationImpl;
-import br.net.gvt.efika.customerAPI.model.service.certificator.FkIdGenerator;
-import br.net.gvt.efika.customerAPI.model.service.factory.FactoryEntitiy;
 import br.net.gvt.efika.customerAPI.model.service.certificator.impl.CertifierCadastroCertificationImpl;
 import br.net.gvt.efika.customerAPI.model.service.certificator.impl.CertifierConectividadeCertificationImpl;
 import br.net.gvt.efika.customerAPI.model.service.certificator.impl.CertifierPerformanceCertificationImpl;
@@ -33,15 +30,15 @@ import br.net.gvt.efika.fulltest.service.factory.FactoryFulltestService;
 import br.net.gvt.efika.fulltest.model.telecom.properties.gpon.SerialOntGpon;
 import br.net.gvt.efika.fulltest.service.fulltest.FulltestService;
 import br.net.gvt.efika.fulltest.service.config_porta.ConfigPortaService;
+import br.net.gvt.efika.util.thread.EfikaThread;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class CertificationServiceImpl implements CertificationService {
 
-    
     private final CustomerFinder finder = FactoryService.customerFinder();
-    private final CustomerCertification certification = FactoryEntitiy.createCustLogCertification();
+    private CustomerCertification certification;
     private final FulltestService ftDAO = FactoryFulltestService.newFulltestService();
     private final ConfigPortaService confPortaDAO = FactoryFulltestService.newConfigPortaService();
 
@@ -49,82 +46,89 @@ public class CertificationServiceImpl implements CertificationService {
 
     @Override
     public CustomerCertification certificationByParam(GenericRequest req) throws Exception {
-        if (req.getCustomer() == null) {
-            cust = FactoryService.customerFinder().getCustomer(req);
-        } else {
-            cust = req.getCustomer();
-        }
-        if (cust.getDesignador() != null && cust.getRede().getTipo() == TipoRede.GPON) {
-            Thread assiaGpon = new Thread(new AssiaClearViewRunnable(req.getExecutor(), cust.getDesignador()));
-            assiaGpon.start();
-        }
-        this.certification.setCustomer(cust);
-        this.certification.setExecutor(req.getExecutor());
+        certification = CustomerCertificationOperator.start(req);
 
-        CertificationBlock cadastro = FactoryCertificationBlock.createBlockByName(CertificationBlockName.CADASTRO);
-        new CertifierCadastroCertificationImpl(cust).certify(cadastro);
-        this.certification.getBlocks().add(cadastro);
-
-        if (cadastro.getResultado() == CertificationResult.OK) {
-            FullTest fulltest = ftDAO.fulltest(new FulltestRequest(cust, req.getExecutor()));
-            this.certification.setFulltest(fulltest);
-
-            Thread threadPerf = new Thread(new LogCommand(certification) {
-                @Override
-                public void run() {
-                    try {
-                        CertificationBlock perfBlock = FactoryCertificationBlock.createBlockByName(CertificationBlockName.PERFORMANCE);
-                        new CertifierPerformanceCertificationImpl(fulltest).certify(perfBlock);
-                        certification.getBlocks().add(perfBlock);
-                    } catch (Exception e) {
-                        Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
+        Thread certThread = new EfikaThread(new LogCommand(certification) {
+            @Override
+            public void run() {
+                try {
+                    if (req.getCustomer() == null) {
+                        cust = FactoryService.customerFinder().getCustomer(req);
+                    } else {
+                        cust = req.getCustomer();
                     }
-                }
-            });
-
-            Thread threadConnect = new Thread(new LogCommand(certification) {
-                @Override
-                public void run() {
-                    try {
-                        CertificationBlock connectBlock = FactoryCertificationBlock.createBlockByName(CertificationBlockName.CONECTIVIDADE);
-                        new CertifierConectividadeCertificationImpl(fulltest).certify(connectBlock);
-                        certification.getBlocks().add(connectBlock);
-                    } catch (Exception e) {
-                        Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
+                    if (cust.getDesignador() != null && cust.getRede().getTipo() == TipoRede.GPON) {
+                        Thread assiaGpon = new Thread(new AssiaClearViewRunnable(req.getExecutor(), cust.getDesignador()));
+                        assiaGpon.start();
                     }
+                } catch (Exception e) {
+                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
                 }
-            });
+                certification.setCustomer(cust);
+                try {
+                    CertificationBlock cadastro = FactoryCertificationBlock.createBlockByName(CertificationBlockName.CADASTRO);
+                    new CertifierCadastroCertificationImpl(cust).certify(cadastro);
+                    certification.getBlocks().add(cadastro);
 
-            Thread threadServ = new Thread(new LogCommand(certification) {
-                @Override
-                public void run() {
-                    try {
-                        CertificationBlock servBlock = FactoryCertificationBlock.createBlockByName(CertificationBlockName.SERVICOS);
-                        new CertifierServicosCertificationImpl(fulltest).certify(servBlock);
-                        certification.getBlocks().add(servBlock);
-                    } catch (Exception e) {
-                        Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
+                    if (cadastro.getResultado() == CertificationResult.OK) {
+                        FullTest fulltest = ftDAO.fulltest(new FulltestRequest(cust, req.getExecutor()));
+                        certification.setFulltest(fulltest);
+
+                        Thread threadPerf = new Thread(new LogCommand(certification) {
+                            @Override
+                            public void run() {
+                                try {
+                                    CertificationBlock perfBlock = FactoryCertificationBlock.createBlockByName(CertificationBlockName.PERFORMANCE);
+                                    new CertifierPerformanceCertificationImpl(fulltest).certify(perfBlock);
+                                    certification.getBlocks().add(perfBlock);
+                                } catch (Exception e) {
+                                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
+                                }
+                            }
+                        });
+
+                        Thread threadConnect = new Thread(new LogCommand(certification) {
+                            @Override
+                            public void run() {
+                                try {
+                                    CertificationBlock connectBlock = FactoryCertificationBlock.createBlockByName(CertificationBlockName.CONECTIVIDADE);
+                                    new CertifierConectividadeCertificationImpl(fulltest).certify(connectBlock);
+                                    certification.getBlocks().add(connectBlock);
+                                } catch (Exception e) {
+                                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
+                                }
+                            }
+                        });
+
+                        Thread threadServ = new Thread(new LogCommand(certification) {
+                            @Override
+                            public void run() {
+                                try {
+                                    CertificationBlock servBlock = FactoryCertificationBlock.createBlockByName(CertificationBlockName.SERVICOS);
+                                    new CertifierServicosCertificationImpl(fulltest).certify(servBlock);
+                                    certification.getBlocks().add(servBlock);
+                                } catch (Exception e) {
+                                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
+                                }
+                            }
+                        });
+
+                        threadPerf.start();
+                        threadConnect.start();
+                        threadServ.start();
+
+                        threadPerf.join();
+                        threadConnect.join();
+                        threadServ.join();
                     }
+                    certification = CustomerCertificationOperator.conclude(certification);
+                } catch (Exception e) {
+                    Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
                 }
-            });
+            }
+        });
 
-            threadPerf.start();
-            threadConnect.start();
-            threadServ.start();
-
-            threadPerf.join();
-            threadConnect.join();
-            threadServ.join();
-        }
-        this.conclude();
         return certification;
-    }
-
-    protected void conclude() throws Exception {
-        new CertifierCustomerCertificationImpl().certify(certification);
-        certification.setDataFim(Calendar.getInstance().getTime());
-        certification.setFkId(FkIdGenerator.generate(certification));
-        FactoryDAO.newCertificationDAO().save(certification);
     }
 
     @Override
