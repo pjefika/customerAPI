@@ -4,6 +4,7 @@ import br.net.gvt.efika.customerAPI.model.entity.CustomerCertification;
 import br.net.gvt.efika.customer.model.certification.CertificationBlock;
 import br.net.gvt.efika.customer.model.certification.enums.CertificationBlockName;
 import br.net.gvt.efika.customer.model.certification.enums.CertificationResult;
+import br.net.gvt.efika.customerAPI.dao.certification.CertificationDAO;
 import br.net.gvt.efika.efika_customer.model.customer.EfikaCustomer;
 import br.net.gvt.efika.customerAPI.dao.mongo.FactoryDAO;
 import br.net.gvt.efika.customerAPI.model.GenericRequest;
@@ -41,13 +42,13 @@ public class CertificationServiceImpl implements CertificationService {
     private CustomerCertification certification;
     private final FulltestService ftDAO = FactoryFulltestService.newFulltestService();
     private final ConfigPortaService confPortaDAO = FactoryFulltestService.newConfigPortaService();
+    private final CertificationDAO dao = FactoryDAO.newCertificationDAO();
 
     private EfikaCustomer cust;
 
     @Override
     public CustomerCertification certificationByParam(GenericRequest req) throws Exception {
         certification = CustomerCertificationOperator.start(req);
-
         Thread certThread = new EfikaThread(new LogCommand(certification) {
             @Override
             public void run() {
@@ -73,13 +74,23 @@ public class CertificationServiceImpl implements CertificationService {
                     if (cadastro.getResultado() == CertificationResult.OK) {
                         FullTest fulltest = ftDAO.fulltest(new FulltestRequest(cust, req.getExecutor()));
                         certification.setFulltest(fulltest);
+                        CustomerCertificationOperator.update(certification);
+//                        Thread.sleep(50000);
+                        for (int i = 0; i < 15; i++) {
+                            certification.setFulltest(ftDAO.getById(fulltest.getOwner()));
+                            CustomerCertificationOperator.update(certification);
+                            if (certification.getFulltest().getDataFim() != null) {
+                                break;
+                            }
+                            Thread.sleep(10000);
+                        }
 
                         Thread threadPerf = new Thread(new LogCommand(certification) {
                             @Override
                             public void run() {
                                 try {
                                     CertificationBlock perfBlock = FactoryCertificationBlock.createBlockByName(CertificationBlockName.PERFORMANCE);
-                                    new CertifierPerformanceCertificationImpl(fulltest).certify(perfBlock);
+                                    new CertifierPerformanceCertificationImpl(certification.getFulltest()).certify(perfBlock);
                                     certification.getBlocks().add(perfBlock);
                                 } catch (Exception e) {
                                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
@@ -92,7 +103,7 @@ public class CertificationServiceImpl implements CertificationService {
                             public void run() {
                                 try {
                                     CertificationBlock connectBlock = FactoryCertificationBlock.createBlockByName(CertificationBlockName.CONECTIVIDADE);
-                                    new CertifierConectividadeCertificationImpl(fulltest).certify(connectBlock);
+                                    new CertifierConectividadeCertificationImpl(certification.getFulltest()).certify(connectBlock);
                                     certification.getBlocks().add(connectBlock);
                                 } catch (Exception e) {
                                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
@@ -105,7 +116,7 @@ public class CertificationServiceImpl implements CertificationService {
                             public void run() {
                                 try {
                                     CertificationBlock servBlock = FactoryCertificationBlock.createBlockByName(CertificationBlockName.SERVICOS);
-                                    new CertifierServicosCertificationImpl(fulltest).certify(servBlock);
+                                    new CertifierServicosCertificationImpl(certification.getFulltest()).certify(servBlock);
                                     certification.getBlocks().add(servBlock);
                                 } catch (Exception e) {
                                     Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
@@ -127,7 +138,9 @@ public class CertificationServiceImpl implements CertificationService {
                 }
             }
         });
-
+        if (certification.getTipo() == null) {
+            certThread.join();
+        }
         return certification;
     }
 
@@ -179,6 +192,15 @@ public class CertificationServiceImpl implements CertificationService {
         ValidacaoResult settedOnt = confPortaDAO.setOntToOlt(new SetOntToOltRequest(cust, req.getExecutor(), new SerialOntGpon(req.getParameter())));
 
         return settedOnt;
+    }
+
+    @Override
+    public CustomerCertification findById(String id) throws Exception {
+        certification = dao.read(id);
+        if (certification.getFulltest().getDataFim() == null) {
+            certification.setFulltest(ftDAO.getById(certification.getFulltest().getOwner()));
+        }
+        return certification;
     }
 
 }

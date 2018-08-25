@@ -20,7 +20,6 @@ public abstract class CertifierCertificationBlockGeneric extends CertifierAbstra
 
     protected List<CertificationAssertName> asserts = new ArrayList<>();
 
-    
     @Override
     public void certify(CertificationBlock t) {
         this.block = t;
@@ -30,32 +29,37 @@ public abstract class CertifierCertificationBlockGeneric extends CertifierAbstra
 
     @Override
     public final void check() {
-        for (CertificationAssert aAssert : block.getAsserts()) {
-            if (aAssert.getResultado() == CertificationResult.FORWARDED_CO) {
-                block.concluir(aAssert.getResultado(), aAssert.getOrientacao());
-                break;
+        try {
+            for (CertificationAssert aAssert : block.getAsserts()) {
+                if (aAssert.getResultado() == CertificationResult.FORWARDED_CO) {
+                    block.concluir(aAssert.getResultado(), aAssert.getOrientacao());
+                    break;
+                }
+
+                if (aAssert.getResultado() == CertificationResult.TO_FIX) {
+                    block.concluir(aAssert.getResultado(), aAssert.getOrientacao());
+                    break;
+                }
+
+                if (aAssert.getResultado() == CertificationResult.FIXED) {
+                    block.concluir(aAssert.getResultado(), aAssert.getOrientacao());
+                    break;
+                }
+
+                if (aAssert.getResultado() == CertificationResult.FISICAL) {
+                    block.concluir(aAssert.getResultado(), aAssert.getOrientacao());
+                    break;
+                }
+
             }
 
-            if (aAssert.getResultado() == CertificationResult.TO_FIX) {
-                block.concluir(aAssert.getResultado(), aAssert.getOrientacao());
-                break;
+            if (block.getOrientacao() == null) {
+                block.concluir(CertificationResult.OK, "OK");
             }
-
-            if (aAssert.getResultado() == CertificationResult.FIXED) {
-                block.concluir(aAssert.getResultado(), aAssert.getOrientacao());
-                break;
-            }
-
-            if (aAssert.getResultado() == CertificationResult.FISICAL) {
-                block.concluir(aAssert.getResultado(), aAssert.getOrientacao());
-                break;
-            }
-
+        } catch (Exception e) {
+            block.concluir(CertificationResult.FORWARDED_CO, "Falha ao verificar " + block.getNome().getBeautyName());
         }
 
-        if (block.getOrientacao() == null) {
-            block.concluir(CertificationResult.OK, "OK");
-        }
     }
 
     public CertificationBlock getBlock() {

@@ -35,7 +35,7 @@ public class CertificationApiServiceImpl extends CertificationApiService {
     public Response getCertificationById(String id, SecurityContext securityContext)
             throws NotFoundException {
         try {
-            return Response.ok().entity(FactoryDAO.newCertificationDAO().read(id)).build();
+            return Response.ok().entity(FactoryService.certSrvc().findById(id)).build();
         } catch (Exception e) {
             return Response.serverError().entity(e).build();
         }

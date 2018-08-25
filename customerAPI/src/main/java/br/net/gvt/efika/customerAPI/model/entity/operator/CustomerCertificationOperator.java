@@ -26,6 +26,11 @@ public class CustomerCertificationOperator {
         return certification;
     }
 
+    public static CustomerCertification update(CustomerCertification certification) throws Exception {
+        dao.save(certification);
+        return certification;
+    }
+
     public static CustomerCertification conclude(CustomerCertification certification) throws Exception {
         new CertifierCustomerCertificationImpl().certify(certification);
         certification.setDataFim(Calendar.getInstance().getTime());

@@ -20,6 +20,8 @@ public interface CertificationService {
 
     public CustomerCertification certificationByParam(GenericRequest req) throws Exception;
 
+    public CustomerCertification findById(String id) throws Exception;
+
     public ValidacaoResult certifyRede(GenericRequest req) throws Exception;
 
     public List<SerialOntGpon> ontsDisp(GenericRequest req) throws Exception;
