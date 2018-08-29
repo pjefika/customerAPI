@@ -5,6 +5,7 @@ import br.net.gvt.efika.customer.model.certification.Certificational;
 import br.net.gvt.efika.customerAPI.model.enums.CertificationType;
 import br.net.gvt.efika.efika_customer.model.customer.EfikaCustomer;
 import br.net.gvt.efika.fulltest.model.fulltest.FullTest;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import java.util.ArrayList;
@@ -43,6 +44,7 @@ public class CustomerCertification extends Certificational {
 
     private FullTest fulltest;
 
+    @JsonIgnore
     private CertificationType tipo;
 
     public CustomerCertification() {

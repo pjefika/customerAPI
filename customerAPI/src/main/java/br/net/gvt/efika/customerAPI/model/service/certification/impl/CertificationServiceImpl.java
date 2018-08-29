@@ -197,9 +197,12 @@ public class CertificationServiceImpl implements CertificationService {
     @Override
     public CustomerCertification findById(String id) throws Exception {
         certification = dao.read(id);
-        if (certification.getFulltest().getDataFim() == null) {
-            certification.setFulltest(ftDAO.getById(certification.getFulltest().getOwner()));
+        if (certification.getFulltest() != null) {
+            if (certification.getFulltest().getDataFim() == null) {
+                certification.setFulltest(ftDAO.getById(certification.getFulltest().getOwner()));
+            }
         }
+
         return certification;
     }
 
