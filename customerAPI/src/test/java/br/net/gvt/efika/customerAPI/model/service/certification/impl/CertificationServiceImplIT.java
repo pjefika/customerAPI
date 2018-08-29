@@ -48,7 +48,7 @@ public class CertificationServiceImplIT {
     public void tearDown() {
     }
 
-    private GenericRequest req = new GenericRequest("2430280705", "TESTE");
+    private GenericRequest req = new GenericRequest("4133335556", "TESTE");
 
     private CertificationServiceImpl instance = new CertificationServiceImpl();
 
@@ -59,8 +59,8 @@ public class CertificationServiceImplIT {
     public void testCertificationByParam() throws Exception {
         try {
             System.out.println("certificationByParam");
-            GenericRequest req = new GenericRequest("4130886762", "G0041775");
-            CertificationServiceImpl instance = new CertificationServiceImpl();
+//            GenericRequest req = new GenericRequest("4130886762", "G0041775");
+//            CertificationServiceImpl instance = new CertificationServiceImpl();
             CustomerCertification result = instance.certificationByParam(req);
             System.out.println(new JacksonMapper(CustomerCertification.class).serialize(result));
             assertTrue(result.getResultado() == CertificationResult.OK);
@@ -121,6 +121,18 @@ public class CertificationServiceImplIT {
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
+    }
+
+    /**
+     * Test of findById method, of class CertificationServiceImpl.
+     */
+    @Test
+    public void testFindById() throws Exception {
+        System.out.println("findById");
+        String id = "5b81c7a61df2a936a81638e6";
+        
+        CustomerCertification result = instance.findById(id);
+        System.out.println(new JacksonMapper(CustomerCertification.class).serialize(result));
     }
 
 }
