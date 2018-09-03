@@ -12,11 +12,13 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import br.net.gvt.efika.customerAPI.model.entity.ExceptionLog;
-import br.net.gvt.efika.customerAPI.model.entity.operator.CustomerCertificationOperator;
+import br.net.gvt.efika.customerAPI.model.enums.CertificationType;
+import br.net.gvt.efika.customerAPI.model.service.certification.operator.CustomerCertificationOperator;
 import br.net.gvt.efika.customerAPI.model.service.certification.command.AssiaClearViewRunnable;
 import br.net.gvt.efika.customerAPI.model.service.certification.command.LogCommand;
 import br.net.gvt.efika.customerAPI.model.service.certificator.impl.CertifierCadastroCertificationImpl;
 import br.net.gvt.efika.customerAPI.model.service.certificator.impl.CertifierConectividadeCertificationImpl;
+import br.net.gvt.efika.customerAPI.model.service.certificator.impl.CertifierHpnaCertificationImpl;
 import br.net.gvt.efika.customerAPI.model.service.certificator.impl.CertifierPerformanceCertificationImpl;
 import br.net.gvt.efika.customerAPI.model.service.certificator.impl.CertifierServicosCertificationImpl;
 import br.net.gvt.efika.customerAPI.model.service.factory.FactoryCertificationBlock;
@@ -31,16 +33,21 @@ import br.net.gvt.efika.fulltest.service.factory.FactoryFulltestService;
 import br.net.gvt.efika.fulltest.model.telecom.properties.gpon.SerialOntGpon;
 import br.net.gvt.efika.fulltest.service.fulltest.FulltestService;
 import br.net.gvt.efika.fulltest.service.config_porta.ConfigPortaService;
+import br.net.gvt.efika.stealer.model.tv.request.DiagnosticoHpnaIn;
+import br.net.gvt.efika.stealer.service.conf_online.TVService;
+import br.net.gvt.efika.stealer.service.factory.FactoryStealerService;
 import br.net.gvt.efika.util.thread.EfikaThread;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Calendar;
 
 public class CertificationServiceImpl implements CertificationService {
 
     private final CustomerFinder finder = FactoryService.customerFinder();
     private CustomerCertification certification;
     private final FulltestService ftDAO = FactoryFulltestService.newFulltestService();
+    private final TVService tvDAO = FactoryStealerService.tvService();
     private final ConfigPortaService confPortaDAO = FactoryFulltestService.newConfigPortaService();
     private final CertificationDAO dao = FactoryDAO.newCertificationDAO();
 
@@ -72,19 +79,42 @@ public class CertificationServiceImpl implements CertificationService {
                     certification.getBlocks().add(cadastro);
 
                     if (cadastro.getResultado() == CertificationResult.OK) {
-                        FullTest fulltest = ftDAO.fulltest(new FulltestRequest(cust, req.getExecutor()));
-                        certification.setFulltest(fulltest);
-                        CustomerCertificationOperator.update(certification);
-//                        Thread.sleep(50000);
-                        for (int i = 0; i < 15; i++) {
-                            certification.setFulltest(ftDAO.getById(fulltest.getOwner()));
-                            CustomerCertificationOperator.update(certification);
-                            if (certification.getFulltest().getDataFim() != null) {
-                                break;
+                        if (certification.getTipo() == CertificationType.TV) {
+                            try {
+                                Calendar c = Calendar.getInstance();
+                                c.add(Calendar.MINUTE, -10);
+                                CustomerCertification lastCert = dao.findByCustomer(cust).get(0);
+                                if (lastCert.getDataFim().after(c.getTime()) && lastCert.getFulltest().getResultado()) {
+                                    certification.setFulltest(lastCert.getFulltest());
+                                } else {
+                                    certification = execFulltest(certification);
+                                }
+                            } catch (Exception e) {
+                                certification = execFulltest(certification);
                             }
-                            Thread.sleep(10000);
+                            EfikaThread threadHpna = new EfikaThread(new LogCommand(certification) {
+                                @Override
+                                public void run() {
+                                    try {
+                                        CertificationBlock hpnaBlock = FactoryCertificationBlock.createBlockByName(CertificationBlockName.HPNA);
+                                        new CertifierHpnaCertificationImpl(tvDAO.diagnosticoHpna(
+                                                new DiagnosticoHpnaIn(certification.getCustomer(), certification.getExecutor()))
+                                        ).certify(hpnaBlock);
+                                        certification.getBlocks().add(hpnaBlock);
+                                    } catch (Exception e) {
+                                        Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
+                                    }
+                                }
+                            });
+                            /**
+                             * abrir thread para adicionar bloco de
+                             * certification do youbora
+                             * 
+                             */
+                            threadHpna.join();
+                        } else {
+                            certification = execFulltest(certification);
                         }
-
                         Thread threadPerf = new Thread(new LogCommand(certification) {
                             @Override
                             public void run() {
@@ -203,6 +233,22 @@ public class CertificationServiceImpl implements CertificationService {
             }
         }
 
+        return certification;
+    }
+
+    private CustomerCertification execFulltest(CustomerCertification certification) throws Exception {
+        FullTest fulltest = ftDAO.fulltest(new FulltestRequest(certification.getCustomer(), certification.getExecutor()));
+        certification.setFulltest(fulltest);
+        CustomerCertificationOperator.update(certification);
+//                        Thread.sleep(50000);
+        for (int i = 0; i < 15; i++) {
+            certification.setFulltest(ftDAO.getById(fulltest.getOwner()));
+            CustomerCertificationOperator.update(certification);
+            if (certification.getFulltest().getDataFim() != null) {
+                break;
+            }
+            Thread.sleep(10000);
+        }
         return certification;
     }
 

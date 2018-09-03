@@ -3,12 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.net.gvt.efika.customerAPI.model.entity.operator;
+package br.net.gvt.efika.customerAPI.model.service.certification.operator;
 
 import br.net.gvt.efika.customerAPI.dao.certification.CertificationDAO;
 import br.net.gvt.efika.customerAPI.dao.mongo.FactoryDAO;
 import br.net.gvt.efika.customerAPI.model.GenericRequest;
 import br.net.gvt.efika.customerAPI.model.entity.CustomerCertification;
+import br.net.gvt.efika.customerAPI.model.enums.CertificationType;
 import br.net.gvt.efika.customerAPI.model.service.certificator.CertifierCustomerCertificationImpl;
 import br.net.gvt.efika.customerAPI.model.service.certificator.FkIdGenerator;
 import br.net.gvt.efika.customerAPI.model.service.factory.FactoryEntitiy;
@@ -36,6 +37,21 @@ public class CustomerCertificationOperator {
         certification.setDataFim(Calendar.getInstance().getTime());
         certification.setFkId(FkIdGenerator.generate(certification));
         dao.save(certification);
+        return certification;
+    }
+
+    public static CustomerCertification run(CustomerCertification certification) throws Exception {
+        switch (certification.getTipo()) {
+            case BANDA :
+                
+                break;
+            case TV:
+                break;
+            case VOZ:
+                break;
+            default:
+                break;
+        }
         return certification;
     }
 

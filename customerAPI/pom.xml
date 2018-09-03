@@ -115,6 +115,12 @@
         
         <dependency>
             <groupId>br.net.gvt.efika</groupId>
+            <artifactId>stealer</artifactId>
+            <version>1.0.0</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>br.net.gvt.efika</groupId>
             <artifactId>fulltest</artifactId>
             <version>1.0.3</version>
         </dependency>
