@@ -87,74 +87,53 @@ public class CertificationServiceImpl implements CertificationService {
                     new CertifierCadastroCertificationImpl(cust).certify(cadastro);
                     certification.getBlocks().add(cadastro);
 
-                    System.out.println("Resultado: " + cadastro.getResultado());
-                    System.out.println("Tipo: " + certification.getTipo());
+                    //System.out.println("Resultado: " + cadastro.getResultado());
+                    //System.out.println("Tipo: " + certification.getTipo());
                     if (cadastro.getResultado() == CertificationResult.OK) {
                         if (certification.getTipo() == CertificationType.TV) {
                             try {
-                                System.out.println("AAAAAA");
+                                //System.out.println("AAAAAA");
                                 Calendar c = Calendar.getInstance();
                                 c.add(Calendar.MINUTE, -10);
                                 CustomerCertification lastCert = dao.findByCustomer(cust).get(0);
                                 if (lastCert.getDataFim().after(c.getTime()) && lastCert.getFulltest().getResultado()) {
-                                    System.out.println("BBBBBB");
+                                    //System.out.println("BBBBBB");
                                     certification.setFulltest(lastCert.getFulltest());
                                 } else {
-                                    System.out.println("CCCCCC");
+                                    //System.out.println("CCCCCC");
                                     certification = execFulltest(certification);
                                 }
                             } catch (Exception e) {
-                                System.out.println(e.getMessage());
+                                //System.out.println(e.getMessage());
                                 certification = execFulltest(certification);
                             }
                             EfikaThread threadHpna = new EfikaThread(new LogCommand(certification) {
                                 @Override
                                 public void run() {
-                                    System.out.println("Thread");
+                                    //System.out.println("Thread");
                                     CertificationBlock hpnaBlock = null;
                                     try {
                                         hpnaBlock = FactoryCertificationBlock.createBlockByName(CertificationBlockName.HPNA);
-                                        System.out.println("HPNA BLOCK");
+                                        //System.out.println("HPNA BLOCK");
 
                                         DiagnosticoHpnaIn nN = new DiagnosticoHpnaIn(certification.getCustomer(), certification.getExecutor());
-                                        System.out.println("Diag: " + nN.toString());
+                                        //System.out.println("Diag: " + nN.toString());
                                         //nN.getEc().setAsserts(new ArrayList<>());
 
-                                        //region TEST UNIREST
 
-                                        //Unirest.setProxy(new HttpHost("192.168.25.89", 8080));
-
-//                                        Gson gson = new GsonBuilder()
-//                                                .setDateFormat("yyyy-MM-dd HH:mm:ss").create();
-//
-//                                        String nJson = gson.toJson(nN);
-//                                        JSONArray oJson = new JSONArray(nJson);
-//                                        HttpResponse<JsonNode> jsonResponse = Unirest.post("http://localhost:7173/stealerAPI/confOnline/diagnosticoHpna")
-//                                                .header("accept", "application/json")
-//                                                .header("content-type", "application/json")
-//                                                .body(oJson)
-//                                                .asJson();
-//                                        System.out.println(jsonResponse.getBody());
-                                        //endregion
                                         DiagnosticoHpnaIn diagnosticoHpnaIn = nN;
                                         List<DecoderTV> mM = tvDAO.diagnosticoHpna(diagnosticoHpnaIn);
-                                        //Object mM = tvDAO.diagnosticoHpna(diagnosticoHpnaIn);
-                                        //List<DecoderTV> mM = null;
-                                        //System.out.println("SIZE: " + mM.size());
-                                        //System.out.println("Dec" + mM.toString());
-//                                        if(mM == null){
-//                                            mM = new ArrayList<>();
-//                                        }
+
                                         new CertifierHpnaCertificationImpl(mM).certify(hpnaBlock);
                                         certification.getBlocks().add(hpnaBlock);
                                     } catch (Exception e) {
                                         List<DecoderTV> mM = new ArrayList<>();
                                         new CertifierHpnaCertificationImpl(mM).certify(hpnaBlock);
                                         certification.getBlocks().add(hpnaBlock);
-                                        //System.out.println("ERRO: " + e.getMessage());
-                                        System.out.println("---------------------------------------------");
-                                        e.printStackTrace();
-                                        System.out.println("---------------------------------------------");
+                                        System.out.println("ERRO: " + e.getMessage());
+                                        //System.out.println("---------------------------------------------");
+                                        //e.printStackTrace();
+                                        //System.out.println("---------------------------------------------");
                                         //Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
                                     }
                                 }
@@ -184,7 +163,8 @@ public class CertificationServiceImpl implements CertificationService {
                                         System.out.println(jsonResponse.getBody());
                                         certification.getBlocks().add(youboraBlock);
                                     }catch (Exception e){
-                                        Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
+                                        System.out.println("YOUBORA ERRO: " + e.getMessage());
+                                        //Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
                                     }
                                 }
                             });
