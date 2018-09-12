@@ -144,7 +144,7 @@ public class CertificationServiceImpl implements CertificationService {
                              *  PENDENTE ADICIONAR NA STEALER
                              */
 
-
+                            /*
                             EfikaThread threadYoubora = new EfikaThread(new LogCommand(certification) {
                                 @Override
                                 public void run() {
@@ -169,7 +169,7 @@ public class CertificationServiceImpl implements CertificationService {
                                 }
                             });
                             threadYoubora.join();
-
+                            */
                             threadHpna.join();
                         } else {
                             certification = execFulltest(certification);
