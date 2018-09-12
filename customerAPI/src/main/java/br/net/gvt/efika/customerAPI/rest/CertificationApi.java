@@ -39,7 +39,7 @@ public class CertificationApi {
 
     @GET
     @Path("/{id}")
-    @Produces({"application/json", "application/xml"})
+    @Produces({"application/json"})
     public Response getCertificationById(@PathParam("id") String id, @Context SecurityContext securityContext)
             throws NotFoundException {
         return delegate.getCertificationById(id, securityContext);
