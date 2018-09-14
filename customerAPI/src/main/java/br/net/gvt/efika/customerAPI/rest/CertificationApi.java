@@ -1,5 +1,6 @@
 package br.net.gvt.efika.customerAPI.rest;
 
+import br.net.gvt.efika.customerAPI.model.entity.CustomerCertification;
 import br.net.gvt.efika.efika_customer.model.customer.EfikaCustomer;
 import br.net.gvt.efika.customerAPI.rest.factories.CertificationApiServiceFactory;
 import br.net.gvt.efika.customerAPI.model.CertificationResponse;
@@ -14,11 +15,12 @@ public class CertificationApi {
 
     private final CertificationApiService delegate = CertificationApiServiceFactory.getCertificationApi();
 
-    @GET
-    @Path("/hello")
-    public Response helloApi(){
-        return Response.ok("Hello").build();
-    }
+//    @GET
+//    @Path("/hello/{id}")
+//    public Response helloApi(@PathParam("id") String id, @Context SecurityContext securityContext){
+//        System.out.println(delegate.getCertificationById(id, securityContext));
+//        return Response.ok("Hello").build();
+//    }
 
     @POST
     @Path("/execByParam")
@@ -42,6 +44,10 @@ public class CertificationApi {
     @Produces({"application/json"})
     public Response getCertificationById(@PathParam("id") String id, @Context SecurityContext securityContext)
             throws NotFoundException {
+        System.out.println("-----------------------------------------------------");
+        CustomerCertification cC = (CustomerCertification) delegate.getCertificationById(id, securityContext).getEntity();
+        System.out.println(cC.getExecutor());
+        System.out.println("-----------------------------------------------------");
         return delegate.getCertificationById(id, securityContext);
     }
 

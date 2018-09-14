@@ -8,6 +8,7 @@ import br.net.gvt.efika.customerAPI.model.service.certification.operator.Custome
 import br.net.gvt.efika.customerAPI.model.service.certificator.impl.CertifierHpnaCertificationImpl;
 import br.net.gvt.efika.customerAPI.model.service.factory.FactoryCertificationBlock;
 import br.net.gvt.efika.customerAPI.model.service.factory.FactoryService;
+import br.net.gvt.efika.customerAPI.rest.factories.CertificationApiServiceFactory;
 import br.net.gvt.efika.customerAPI.rest.factories.CustomerApiServiceFactory;
 import br.net.gvt.efika.customerAPI.model.GenericRequest;
 import br.net.gvt.efika.efika_customer.model.customer.EfikaCustomer;
@@ -28,6 +29,7 @@ import java.util.List;
 public class CustomerApi {
 
     private final CustomerApiService delegate = CustomerApiServiceFactory.getCustomerApi();
+    private final CertificationApiService nDelegate = CertificationApiServiceFactory.getCertificationApi();
 
     @POST
     @Path("/findByParameter")
@@ -38,55 +40,51 @@ public class CustomerApi {
     }
 
     @POST
-    @Path("/pack")
+    @Path("/findByParameterTv")
     @Produces({"application/json", "application/xml"})
-    public Response findBeta(GenericRequest body, @Context SecurityContext securityContext){
+    public Response findByParameterTv(String id, @Context SecurityContext securityContext){
+        CustomerCertification cC = null;
+        Response cD = null;
+        try{
+            cD = nDelegate.getCertificationById(id, securityContext);
+            cC = (CustomerCertification) cD.getEntity();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+
         EfikaCustomer cust = null;
-        CustomerCertification certification;
+        CustomerCertification certification = cC;
         TVService tvDAO = FactoryStealerService.tvService();
         try {
-            certification = CustomerCertificationOperator.start(body);
-            if (body.getCustomer() == null) {
-                cust = FactoryService.customerFinder().getCustomer(body);
-            } else {
-                cust = body.getCustomer();
-            }
-            certification.setCustomer(cust);
 
             EfikaThread threadHpna = new EfikaThread(new LogCommand(certification) {
                 @Override
                 public void run() {
                     System.out.println("Thread");
                     CertificationBlock hpnaBlock = null;
+                    List<DecoderTV> mM = null;
                     try {
                         hpnaBlock = FactoryCertificationBlock.createBlockByName(CertificationBlockName.HPNA);
-                        System.out.println("HPNA BLOCK");
 
                         DiagnosticoHpnaIn nN = new DiagnosticoHpnaIn(certification.getCustomer(), certification.getExecutor());
-                        System.out.println("Diag: " + nN.toString());
-                        //nN.getEc().setAsserts(new ArrayList<>());
-
-
                         DiagnosticoHpnaIn diagnosticoHpnaIn = nN;
-                        List<DecoderTV> mM = tvDAO.diagnosticoHpna(diagnosticoHpnaIn);
-
-
+                        mM = tvDAO.diagnosticoHpna(diagnosticoHpnaIn);
                         new CertifierHpnaCertificationImpl(mM).certify(hpnaBlock);
+                        //certification.getBlocks().clear();
                         certification.getBlocks().add(hpnaBlock);
                     } catch (Exception e) {
-                        List<DecoderTV> mM = new ArrayList<>();
                         new CertifierHpnaCertificationImpl(mM).certify(hpnaBlock);
+                        //certification.getBlocks().clear();
                         certification.getBlocks().add(hpnaBlock);
-                        //System.out.println("ERRO: " + e.getMessage());
-                        System.out.println("---------------------------------------------");
-                        e.printStackTrace();
-                        System.out.println("---------------------------------------------");
+                        //List<DecoderTV> mM = new ArrayList<>();
+                        //new CertifierHpnaCertificationImpl(mM).certify(hpnaBlock);
+                        //certification.getBlocks().add(hpnaBlock);
                         //Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
                     }
                 }
             });
             threadHpna.join();
-
+            return Response.ok(certification).build();
         }catch (Exception e){
             e.printStackTrace();
         }

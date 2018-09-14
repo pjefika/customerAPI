@@ -107,6 +107,7 @@ public class CertificationServiceImpl implements CertificationService {
                                 //System.out.println(e.getMessage());
                                 certification = execFulltest(certification);
                             }
+
                             EfikaThread threadHpna = new EfikaThread(new LogCommand(certification) {
                                 @Override
                                 public void run() {
@@ -138,6 +139,7 @@ public class CertificationServiceImpl implements CertificationService {
                                     }
                                 }
                             });
+
                             /**
                              * abrir thread para adicionar bloco de
                              * certification do youbora
@@ -170,7 +172,7 @@ public class CertificationServiceImpl implements CertificationService {
                             });
                             threadYoubora.join();
                             */
-                            threadHpna.join();
+                            //threadHpna.join();
                         } else {
                             certification = execFulltest(certification);
                         }
