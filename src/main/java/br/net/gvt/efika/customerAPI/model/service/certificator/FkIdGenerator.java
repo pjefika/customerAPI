@@ -34,7 +34,13 @@ public class FkIdGenerator {
             res.append("F");
         }
 
-        res.append(certification.getCustomer().getInstancia().substring(0, 2));
+        String inicioEfikaId = "";
+        if(certification.getCustomer().getInstancia() != null){
+            inicioEfikaId = certification.getCustomer().getInstancia().substring(0, 2);
+        }else{
+            inicioEfikaId = certification.getCustomer().getDesignadorAcesso().substring(0, 2);
+        }
+        res.append(inicioEfikaId);
         res.append(random);
         return res.toString();
     }

@@ -42,11 +42,11 @@ public class CustomerApi {
     @POST
     @Path("/findByParameterTv")
     @Produces({"application/json", "application/xml"})
-    public Response findByParameterTv(String id, @Context SecurityContext securityContext){
+    public Response findByParameterTv(GenericRequest body, @Context SecurityContext securityContext){
         CustomerCertification cC = null;
         Response cD = null;
         try{
-            cD = nDelegate.getCertificationById(id, securityContext);
+            cD = nDelegate.getCertificationById(body.getParameter(), securityContext);
             cC = (CustomerCertification) cD.getEntity();
         }catch (Exception e){
             e.printStackTrace();
