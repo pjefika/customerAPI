@@ -12,6 +12,7 @@ import br.net.gvt.efika.customerAPI.rest.factories.CertificationApiServiceFactor
 import br.net.gvt.efika.customerAPI.rest.factories.CustomerApiServiceFactory;
 import br.net.gvt.efika.customerAPI.model.GenericRequest;
 import br.net.gvt.efika.efika_customer.model.customer.EfikaCustomer;
+import br.net.gvt.efika.stealer.model.TesteHpna;
 import br.net.gvt.efika.stealer.model.tv.DecoderTV;
 import br.net.gvt.efika.stealer.model.tv.request.DiagnosticoHpnaIn;
 import br.net.gvt.efika.stealer.service.conf_online.TVService;
@@ -43,17 +44,19 @@ public class CustomerApi {
     @Path("/findByParameterTv")
     @Produces({"application/json", "application/xml"})
     public Response findByParameterTv(GenericRequest body, @Context SecurityContext securityContext){
-        CustomerCertification cC = null;
-        Response cD = null;
+        System.out.println("Oi");
+        CustomerCertification customerCertification = null;
+        Response response = null;
         try{
-            cD = nDelegate.getCertificationById(body.getParameter(), securityContext);
-            cC = (CustomerCertification) cD.getEntity();
+            response = nDelegate.getCertificationById(body.getParameter(), securityContext);
+            customerCertification = (CustomerCertification) response.getEntity();
         }catch (Exception e){
             e.printStackTrace();
+            return Response.ok(e.getMessage()).build();
         }
 
         EfikaCustomer cust = null;
-        CustomerCertification certification = cC;
+        CustomerCertification certification = customerCertification;
         TVService tvDAO = FactoryStealerService.tvService();
         try {
 
@@ -62,18 +65,18 @@ public class CustomerApi {
                 public void run() {
                     System.out.println("Thread");
                     CertificationBlock hpnaBlock = null;
-                    List<DecoderTV> mM = null;
+                    TesteHpna testeHpna = null;
                     try {
                         hpnaBlock = FactoryCertificationBlock.createBlockByName(CertificationBlockName.HPNA);
 
                         DiagnosticoHpnaIn nN = new DiagnosticoHpnaIn(certification.getCustomer(), certification.getExecutor());
                         DiagnosticoHpnaIn diagnosticoHpnaIn = nN;
-                        mM = tvDAO.diagnosticoHpna(diagnosticoHpnaIn);
-                        new CertifierHpnaCertificationImpl(mM).certify(hpnaBlock);
+                        testeHpna = tvDAO.diagnosticoHpna(diagnosticoHpnaIn);
+                        new CertifierHpnaCertificationImpl(testeHpna.getStbs()).certify(hpnaBlock);
                         //certification.getBlocks().clear();
                         certification.getBlocks().add(hpnaBlock);
                     } catch (Exception e) {
-                        new CertifierHpnaCertificationImpl(mM).certify(hpnaBlock);
+                        new CertifierHpnaCertificationImpl(testeHpna.getStbs()).certify(hpnaBlock);
                         //certification.getBlocks().clear();
                         certification.getBlocks().add(hpnaBlock);
                         //List<DecoderTV> mM = new ArrayList<>();
@@ -87,11 +90,7 @@ public class CustomerApi {
             return Response.ok(certification).build();
         }catch (Exception e){
             e.printStackTrace();
+            return Response.ok(e.getMessage()).build();
         }
-
-
-
-
-        return null;
     }
 }

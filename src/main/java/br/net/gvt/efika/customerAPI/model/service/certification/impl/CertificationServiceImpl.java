@@ -31,6 +31,7 @@ import br.net.gvt.efika.fulltest.service.factory.FactoryFulltestService;
 import br.net.gvt.efika.fulltest.model.telecom.properties.gpon.SerialOntGpon;
 import br.net.gvt.efika.fulltest.service.fulltest.FulltestService;
 import br.net.gvt.efika.fulltest.service.config_porta.ConfigPortaService;
+import br.net.gvt.efika.stealer.model.TesteHpna;
 import br.net.gvt.efika.stealer.model.tv.DecoderTV;
 import br.net.gvt.efika.stealer.model.tv.request.DiagnosticoHpnaIn;
 import br.net.gvt.efika.stealer.service.conf_online.TVService;
@@ -123,10 +124,20 @@ public class CertificationServiceImpl implements CertificationService {
 
 
                                         DiagnosticoHpnaIn diagnosticoHpnaIn = nN;
-                                        List<DecoderTV> mM = tvDAO.diagnosticoHpna(diagnosticoHpnaIn);
+                                        //List<DecoderTV> mM = tvDAO.diagnosticoHpna(diagnosticoHpnaIn);
+                                        TesteHpna testeHpna = tvDAO.diagnosticoHpna(diagnosticoHpnaIn);
+                                        new CertifierHpnaCertificationImpl(testeHpna.getStbs()).certify(hpnaBlock);
+                                        hpnaBlock.setOrientacao(testeHpna.getMensagem());
+                                        if(testeHpna.getSituacao().equals("OK")){
+                                            hpnaBlock.setResultado(CertificationResult.OK);
 
-                                        new CertifierHpnaCertificationImpl(mM).certify(hpnaBlock);
+                                            List<DecoderTV> mM = new ArrayList<>();
+                                            new CertifierHpnaCertificationImpl(mM).certify(hpnaBlock);
+                                        }else{
+                                            hpnaBlock.setResultado(CertificationResult.FORWARDED_CO);
+                                        }
                                         certification.getBlocks().add(hpnaBlock);
+                                        System.out.println("olá");
                                     } catch (Exception e) {
                                         List<DecoderTV> mM = new ArrayList<>();
                                         new CertifierHpnaCertificationImpl(mM).certify(hpnaBlock);
