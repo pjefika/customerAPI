@@ -131,8 +131,8 @@ public class CertificationServiceImpl implements CertificationService {
                                         if(testeHpna.getSituacao().equals("OK")){
                                             hpnaBlock.setResultado(CertificationResult.OK);
 
-                                            List<DecoderTV> mM = new ArrayList<>();
-                                            new CertifierHpnaCertificationImpl(mM).certify(hpnaBlock);
+                                            //List<DecoderTV> mM = new ArrayList<>();
+                                            //new CertifierHpnaCertificationImpl(mM).certify(hpnaBlock);
                                         }else{
                                             hpnaBlock.setResultado(CertificationResult.FORWARDED_CO);
                                         }
@@ -183,7 +183,7 @@ public class CertificationServiceImpl implements CertificationService {
                             });
                             threadYoubora.join();
                             */
-                            //threadHpna.join();
+                            threadHpna.join();
                         } else {
                             certification = execFulltest(certification);
                         }
