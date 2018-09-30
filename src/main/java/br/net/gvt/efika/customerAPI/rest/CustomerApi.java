@@ -87,7 +87,8 @@ public class CustomerApi {
                 }
             });
             threadHpna.join();
-            return Response.ok(certification).build();
+            customerCertification = CustomerCertificationOperator.conclude(certification);
+            return Response.ok(customerCertification).build();
         }catch (Exception e){
             e.printStackTrace();
             return Response.ok(e.getMessage()).build();
