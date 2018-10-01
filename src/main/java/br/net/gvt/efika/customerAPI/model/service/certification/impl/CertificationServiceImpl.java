@@ -131,8 +131,6 @@ public class CertificationServiceImpl implements CertificationService {
                                         if(testeHpna.getSituacao().equals("OK")){
                                             hpnaBlock.setResultado(CertificationResult.OK);
 
-                                            //List<DecoderTV> mM = new ArrayList<>();
-                                            //new CertifierHpnaCertificationImpl(mM).certify(hpnaBlock);
                                         }else{
                                             hpnaBlock.setResultado(CertificationResult.FORWARDED_CO);
                                         }
@@ -151,6 +149,7 @@ public class CertificationServiceImpl implements CertificationService {
                                 }
                             });
 
+                            //region YOUBORA REST (IMPLEMENTAR)
                             /**
                              * abrir thread para adicionar bloco de
                              * certification do youbora
@@ -183,6 +182,8 @@ public class CertificationServiceImpl implements CertificationService {
                             });
                             threadYoubora.join();
                             */
+                            //endregion
+
                             threadHpna.join();
                         } else {
                             certification = execFulltest(certification);

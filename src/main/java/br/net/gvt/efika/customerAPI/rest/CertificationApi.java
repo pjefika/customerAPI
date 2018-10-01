@@ -15,13 +15,6 @@ public class CertificationApi {
 
     private final CertificationApiService delegate = CertificationApiServiceFactory.getCertificationApi();
 
-//    @GET
-//    @Path("/hello/{id}")
-//    public Response helloApi(@PathParam("id") String id, @Context SecurityContext securityContext){
-//        System.out.println(delegate.getCertificationById(id, securityContext));
-//        return Response.ok("Hello").build();
-//    }
-
     @POST
     @Path("/execByParam")
     @Consumes({"application/json", "application/xml"})

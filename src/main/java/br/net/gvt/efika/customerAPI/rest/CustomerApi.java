@@ -2,6 +2,7 @@ package br.net.gvt.efika.customerAPI.rest;
 
 import br.net.gvt.efika.customer.model.certification.CertificationBlock;
 import br.net.gvt.efika.customer.model.certification.enums.CertificationBlockName;
+import br.net.gvt.efika.customer.model.certification.enums.CertificationResult;
 import br.net.gvt.efika.customerAPI.model.entity.CustomerCertification;
 import br.net.gvt.efika.customerAPI.model.service.certification.command.LogCommand;
 import br.net.gvt.efika.customerAPI.model.service.certification.operator.CustomerCertificationOperator;
@@ -72,17 +73,21 @@ public class CustomerApi {
                         DiagnosticoHpnaIn nN = new DiagnosticoHpnaIn(certification.getCustomer(), certification.getExecutor());
                         DiagnosticoHpnaIn diagnosticoHpnaIn = nN;
                         testeHpna = tvDAO.diagnosticoHpna(diagnosticoHpnaIn);
+                        if(testeHpna.getSituacao().equals("OK")){
+                            hpnaBlock.setResultado(CertificationResult.OK);
+                        }else{
+                            hpnaBlock.setResultado(CertificationResult.FORWARDED_CO);
+                        }
                         new CertifierHpnaCertificationImpl(testeHpna.getStbs()).certify(hpnaBlock);
-                        //certification.getBlocks().clear();
                         certification.getBlocks().add(hpnaBlock);
                     } catch (Exception e) {
+                        if(testeHpna.getSituacao().equals("OK")){
+                            hpnaBlock.setResultado(CertificationResult.OK);
+                        }else{
+                            hpnaBlock.setResultado(CertificationResult.FORWARDED_CO);
+                        }
                         new CertifierHpnaCertificationImpl(testeHpna.getStbs()).certify(hpnaBlock);
-                        //certification.getBlocks().clear();
                         certification.getBlocks().add(hpnaBlock);
-                        //List<DecoderTV> mM = new ArrayList<>();
-                        //new CertifierHpnaCertificationImpl(mM).certify(hpnaBlock);
-                        //certification.getBlocks().add(hpnaBlock);
-                        //Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
                     }
                 }
             });
