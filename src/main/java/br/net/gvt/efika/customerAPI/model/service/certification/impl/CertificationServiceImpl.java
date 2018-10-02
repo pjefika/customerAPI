@@ -113,6 +113,7 @@ public class CertificationServiceImpl implements CertificationService {
                                 @Override
                                 public void run() {
                                     //System.out.println("Thread");
+                                    TesteHpna testeHpna = null;
                                     CertificationBlock hpnaBlock = null;
                                     try {
                                         hpnaBlock = FactoryCertificationBlock.createBlockByName(CertificationBlockName.HPNA);
@@ -125,26 +126,17 @@ public class CertificationServiceImpl implements CertificationService {
 
                                         DiagnosticoHpnaIn diagnosticoHpnaIn = nN;
                                         //List<DecoderTV> mM = tvDAO.diagnosticoHpna(diagnosticoHpnaIn);
-                                        TesteHpna testeHpna = tvDAO.diagnosticoHpna(diagnosticoHpnaIn);
+                                        testeHpna = tvDAO.diagnosticoHpna(diagnosticoHpnaIn);
                                         new CertifierHpnaCertificationImpl(testeHpna.getStbs()).certify(hpnaBlock);
                                         hpnaBlock.setOrientacao(testeHpna.getMensagem());
-                                        if(testeHpna.getSituacao().equals("OK")){
-                                            hpnaBlock.setResultado(CertificationResult.OK);
-
-                                        }else{
-                                            hpnaBlock.setResultado(CertificationResult.FORWARDED_CO);
-                                        }
+                                        hpnaBlock.setResultado(CertificationResult.OK);
                                         certification.getBlocks().add(hpnaBlock);
-                                        System.out.println("olá");
                                     } catch (Exception e) {
-                                        List<DecoderTV> mM = new ArrayList<>();
-                                        new CertifierHpnaCertificationImpl(mM).certify(hpnaBlock);
+                                        hpnaBlock.setResultado(CertificationResult.OK);
+                                        hpnaBlock.setOrientacao(testeHpna.getMensagem());
+                                        new CertifierHpnaCertificationImpl(testeHpna.getStbs()).certify(hpnaBlock);
                                         certification.getBlocks().add(hpnaBlock);
-                                        System.out.println("ERRO: " + e.getMessage());
-                                        //System.out.println("---------------------------------------------");
-                                        //e.printStackTrace();
-                                        //System.out.println("---------------------------------------------");
-                                        //Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, e);
+
                                     }
                                 }
                             });
