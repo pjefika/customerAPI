@@ -28,11 +28,11 @@ public class ManobraCertification {
     private String designadorAcesso;
     private String executor;
     private EfikaCustomer customer;
-    private FinalizacaoManobra analise;
+    private FinalizacaoManobra analises;
     private Boolean manobrar;
     private MotivoManobraEnum motivoSaida;
     private MotivoManobraEnum motivoEntrada;
-    private Date dataHora;
+    private Date datahora;
 
     public ObjectId getId() {
         return id;
@@ -83,11 +83,11 @@ public class ManobraCertification {
     }
 
     public FinalizacaoManobra getAnalise() {
-        return analise;
+        return analises;
     }
 
     public void setAnalise(FinalizacaoManobra analise) {
-        this.analise = analise;
+        this.analises = analise;
     }
 
     public Boolean getManobrar() {
@@ -115,11 +115,11 @@ public class ManobraCertification {
     }
 
     public Date getDataHora() {
-        return dataHora;
+        return datahora;
     }
 
     public void setDataHora(Date dataHora) {
-        this.dataHora = dataHora;
+        this.datahora = dataHora;
     }
 
     @Override
@@ -131,11 +131,11 @@ public class ManobraCertification {
         sb.append(", designadorAcesso='").append(designadorAcesso).append('\'');
         sb.append(", executor='").append(executor).append('\'');
         sb.append(", customer=").append(customer);
-        sb.append(", analise=").append(analise);
+        sb.append(", analise=").append(analises);
         sb.append(", manobrar=").append(manobrar);
         sb.append(", motivoSaida=").append(motivoSaida);
         sb.append(", motivoEntrada=").append(motivoEntrada);
-        sb.append(", dataHora=").append(dataHora);
+        sb.append(", dataHora=").append(datahora);
         sb.append('}');
         return sb.toString();
     }
