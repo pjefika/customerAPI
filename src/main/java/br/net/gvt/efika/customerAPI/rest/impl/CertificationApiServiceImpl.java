@@ -32,6 +32,11 @@ public class CertificationApiServiceImpl extends CertificationApiService {
     }
 
     @Override
+    public Response findManobraByCustomer(EfikaCustomer body, SecurityContext securityContext) throws Exception {
+        return Response.ok().entity(FactoryService.manobraService().findManobraByCustomer(body)).build();
+    }
+
+    @Override
     public Response getCertificationById(String id, SecurityContext securityContext)
             throws NotFoundException {
         try {

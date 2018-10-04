@@ -1,5 +1,6 @@
 package br.net.gvt.efika.customerAPI.rest;
 
+import br.net.gvt.efika.customer.model.certification.CertificationAssert;
 import br.net.gvt.efika.customer.model.certification.CertificationBlock;
 import br.net.gvt.efika.customer.model.certification.enums.CertificationBlockName;
 import br.net.gvt.efika.customer.model.certification.enums.CertificationResult;

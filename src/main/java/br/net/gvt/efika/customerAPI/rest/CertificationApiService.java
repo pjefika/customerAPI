@@ -15,6 +15,9 @@ public abstract class CertificationApiService {
     public abstract Response findByCustomer(EfikaCustomer body, SecurityContext securityContext)
             throws Exception;
 
+    public abstract Response findManobraByCustomer(EfikaCustomer body, SecurityContext securityContext)
+            throws Exception;
+
     public abstract Response getCertificationById(String id, SecurityContext securityContext)
             throws NotFoundException;
 

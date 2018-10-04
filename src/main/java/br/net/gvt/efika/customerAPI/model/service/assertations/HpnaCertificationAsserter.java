@@ -51,6 +51,15 @@ public class HpnaCertificationAsserter extends CertificationAsserterAbs<List<Dec
                     String badStbs = "";
                     for (DecoderTV stb : stbs) {
                         Boolean r;
+                        if(stb.getBaudRate() == null &&
+                                stb.getPacketsReceived() == null &&
+                                stb.getAttenuation() == null &&
+                                stb.getPacketsLost() == null &&
+                                stb.getSnr() == null &&
+                                stb.getPhyRate() == null &&
+                                stb.getCertified() == null){
+                            break;
+                        }
                         r = stb.getPacketsReceived().compareTo(1000l) >= 0;
                         r = stb.getAttenuation().compareTo(maxAtn) <= 0 && stb.getAttenuation().compareTo(minAtn) >= 0;
                         r = stb.getSnr().compareTo(new Double("35")) >= 0;

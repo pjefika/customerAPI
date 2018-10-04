@@ -8,6 +8,8 @@ package br.net.gvt.efika.customerAPI.dao.mongo;
 import br.net.gvt.efika.customerAPI.dao.certification.CertificationDAO;
 import br.net.gvt.efika.customerAPI.dao.certification.CertificationDAOImpl;
 import br.net.gvt.efika.customerAPI.dao.exception.ExceptionLogDAOImpl;
+import br.net.gvt.efika.customerAPI.dao.manobra.ManobraDAOImpl;
+import br.net.gvt.efika.customerAPI.dao.manobra.ManobraDao;
 import br.net.gvt.efika.customerAPI.model.entity.ExceptionLog;
 import br.net.gvt.efika.mongo.dao.AbstractMongoDAO;
 
@@ -23,6 +25,10 @@ public class FactoryDAO {
 
     public static CertificationDAO newCertificationDAO() {
         return new CertificationDAOImpl();
+    }
+
+    public static ManobraDao newManobraDao(){
+        return new ManobraDAOImpl();
     }
 
 }

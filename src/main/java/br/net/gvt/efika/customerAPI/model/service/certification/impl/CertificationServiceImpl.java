@@ -248,6 +248,7 @@ public class CertificationServiceImpl implements CertificationService {
             throw new Exception("Falha ao buscar histórico de execuções.");
         }
     }
+
     private ObjectMapper mapper = new ObjectMapper().configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES,
             true);
 

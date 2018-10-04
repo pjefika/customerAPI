@@ -30,8 +30,12 @@ public class CertifierHpnaCertificationImpl extends CertifierCertificationBlockG
                 System.out.println("nNome: " + value);
                 new NonExceptionCommand() {
                     @Override
-                    public void run() throws Exception {
-                        CertifierHpnaCertificationImpl.this.getBlock().getAsserts().add(new HpnaCertificationAsserter().assertCertification(value, CertifierHpnaCertificationImpl.this.stbs));
+                    public void run() {
+                        try {
+                            CertifierHpnaCertificationImpl.this.getBlock().getAsserts().add(new HpnaCertificationAsserter().assertCertification(value, CertifierHpnaCertificationImpl.this.stbs));
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
                     }
                 };
             }

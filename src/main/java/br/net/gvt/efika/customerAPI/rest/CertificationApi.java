@@ -32,6 +32,14 @@ public class CertificationApi {
         return delegate.findByCustomer(body, securityContext);
     }
 
+    @POST
+    @Path("/findManobraByCustomer")
+    @Produces({"application/json", "application/xml"})
+    public Response findMonobraByCustomer(EfikaCustomer body, @Context SecurityContext securityContext)
+            throws Exception {
+        return delegate.findManobraByCustomer(body, securityContext);
+    }
+
     @GET
     @Path("/{id}")
     @Produces({"application/json"})
