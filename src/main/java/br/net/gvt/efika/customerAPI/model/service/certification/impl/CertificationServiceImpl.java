@@ -308,7 +308,8 @@ public class CertificationServiceImpl implements CertificationService {
         CustomerCertificationOperator.update(certification);
 //                        Thread.sleep(50000);
         for (int i = 0; i < 15; i++) {
-            certification.setFulltest(ftDAO.getById(fulltest.getOwner()));
+            FullTest t = ftDAO.getById(fulltest.getOwner());
+            certification.setFulltest(t);
             CustomerCertificationOperator.update(certification);
             if (certification.getFulltest().getDataFim() != null) {
                 //CustomerCertificationOperator.conclude(certification);
