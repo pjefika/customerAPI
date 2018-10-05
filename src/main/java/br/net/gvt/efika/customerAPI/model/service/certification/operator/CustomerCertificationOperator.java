@@ -35,7 +35,9 @@ public class CustomerCertificationOperator {
     public static CustomerCertification conclude(CustomerCertification certification) throws Exception {
         new CertifierCustomerCertificationImpl().certify(certification);
         certification.setDataFim(Calendar.getInstance().getTime());
-        certification.setFkId(FkIdGenerator.generate(certification));
+        if(certification.getFkId() == null){
+            certification.setFkId(FkIdGenerator.generate(certification));
+        }
         dao.save(certification);
         return certification;
     }
@@ -43,7 +45,6 @@ public class CustomerCertificationOperator {
     public static CustomerCertification run(CustomerCertification certification) throws Exception {
         switch (certification.getTipo()) {
             case BANDA :
-                
                 break;
             case TV:
                 break;
