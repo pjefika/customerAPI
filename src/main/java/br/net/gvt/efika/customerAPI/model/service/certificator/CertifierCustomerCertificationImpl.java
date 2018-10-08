@@ -41,7 +41,7 @@ public class CertifierCustomerCertificationImpl extends CertifierAbstract<Custom
 
         }
         
-        if(certification.getFulltest().getValids() == null){
+        if(certification.getFulltest().getValids() == null || certification.getFulltest().getValids().isEmpty()){
             certification.concluir(CertificationResult.FORWARDED_CO, certification.getFulltest().getMensagem());
         }
 
