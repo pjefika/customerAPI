@@ -127,14 +127,14 @@ public class CertificationServiceImpl implements CertificationService {
                                         DiagnosticoHpnaIn diagnosticoHpnaIn = nN;
                                         //List<DecoderTV> mM = tvDAO.diagnosticoHpna(diagnosticoHpnaIn);
                                         testeHpna = tvDAO.diagnosticoHpna(diagnosticoHpnaIn);
-                                        new CertifierHpnaCertificationImpl(testeHpna.getStbs()).certify(hpnaBlock);
+                                        new CertifierHpnaCertificationImpl(testeHpna).certify(hpnaBlock);
                                         hpnaBlock.setOrientacao(testeHpna.getMensagem());
                                         hpnaBlock.setResultado(CertificationResult.OK);
                                         certification.getBlocks().add(hpnaBlock);
                                     } catch (Exception e) {
                                         hpnaBlock.setResultado(CertificationResult.OK);
                                         hpnaBlock.setOrientacao(testeHpna.getMensagem());
-                                        new CertifierHpnaCertificationImpl(testeHpna.getStbs()).certify(hpnaBlock);
+                                        new CertifierHpnaCertificationImpl(testeHpna).certify(hpnaBlock);
                                         certification.getBlocks().add(hpnaBlock);
 
                                     }

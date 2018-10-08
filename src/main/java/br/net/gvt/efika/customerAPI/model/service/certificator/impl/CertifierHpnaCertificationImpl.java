@@ -9,18 +9,20 @@ import br.net.gvt.efika.customer.model.certification.enums.CertificationAssertNa
 import br.net.gvt.efika.customer.model.certification.enums.CertificationResult;
 import br.net.gvt.efika.customerAPI.model.service.assertations.HpnaCertificationAsserter;
 import br.net.gvt.efika.customerAPI.model.service.certification.command.NonExceptionCommand;
+import br.net.gvt.efika.stealer.model.TesteHpna;
 import br.net.gvt.efika.stealer.model.tv.DecoderTV;
 import java.util.List;
 
 public class CertifierHpnaCertificationImpl extends CertifierCertificationBlockGeneric {
 
     private List<DecoderTV> stbs;
+    private TesteHpna testeHpna;
 
     public CertifierHpnaCertificationImpl() {
     }
 
-    public CertifierHpnaCertificationImpl(List<DecoderTV> stbs) {
-        this.stbs = stbs;
+    public CertifierHpnaCertificationImpl(TesteHpna testeHpna) {
+        this.testeHpna = testeHpna;
     }
 
     @Override
@@ -32,7 +34,7 @@ public class CertifierHpnaCertificationImpl extends CertifierCertificationBlockG
                     @Override
                     public void run() {
                         try {
-                            CertifierHpnaCertificationImpl.this.getBlock().getAsserts().add(new HpnaCertificationAsserter().assertCertification(value, CertifierHpnaCertificationImpl.this.stbs));
+                            CertifierHpnaCertificationImpl.this.getBlock().getAsserts().add(new HpnaCertificationAsserter().assertCertification(value, CertifierHpnaCertificationImpl.this.testeHpna));
                         }catch (Exception e){
                             e.printStackTrace();
                         }

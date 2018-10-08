@@ -44,7 +44,7 @@ public class CustomerCertificationOperator {
 
     public static CustomerCertification run(CustomerCertification certification) throws Exception {
         switch (certification.getTipo()) {
-            case BANDA :
+            case BANDA:
                 break;
             case TV:
                 break;

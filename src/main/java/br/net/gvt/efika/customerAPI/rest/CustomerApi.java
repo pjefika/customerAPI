@@ -75,11 +75,11 @@ public class CustomerApi {
                         DiagnosticoHpnaIn diagnosticoHpnaIn = nN;
                         testeHpna = tvDAO.diagnosticoHpna(diagnosticoHpnaIn);
                         hpnaBlock.setResultado(CertificationResult.OK);
-                        new CertifierHpnaCertificationImpl(testeHpna.getStbs()).certify(hpnaBlock);
+                        new CertifierHpnaCertificationImpl(testeHpna).certify(hpnaBlock);
                         certification.getBlocks().add(hpnaBlock);
                     } catch (Exception e) {
                         hpnaBlock.setResultado(CertificationResult.OK);
-                        new CertifierHpnaCertificationImpl(testeHpna.getStbs()).certify(hpnaBlock);
+                        new CertifierHpnaCertificationImpl(testeHpna).certify(hpnaBlock);
                         certification.getBlocks().add(hpnaBlock);
                     }
                 }
