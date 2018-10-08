@@ -40,6 +40,10 @@ public class CertifierCustomerCertificationImpl extends CertifierAbstract<Custom
             }
 
         }
+        
+        if(certification.getFulltest().getValids() == null){
+            certification.concluir(CertificationResult.FORWARDED_CO, certification.getFulltest().getMensagem());
+        }
 
         if (certification.getOrientacao() == null) {
             certification.concluir(CertificationResult.OK, "OK");
