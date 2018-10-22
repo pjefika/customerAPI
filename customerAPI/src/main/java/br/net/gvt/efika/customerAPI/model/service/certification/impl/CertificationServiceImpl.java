@@ -10,7 +10,6 @@ import br.net.gvt.efika.efika_customer.model.customer.EfikaCustomer;
 import br.net.gvt.efika.customerAPI.dao.mongo.FactoryDAO;
 import br.net.gvt.efika.customerAPI.model.GenericRequest;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -32,7 +31,6 @@ import br.net.gvt.efika.fulltest.model.telecom.properties.gpon.SerialOntGpon;
 import br.net.gvt.efika.fulltest.service.fulltest.FulltestService;
 import br.net.gvt.efika.fulltest.service.config_porta.ConfigPortaService;
 import br.net.gvt.efika.stealer.model.TesteHpna;
-import br.net.gvt.efika.stealer.model.tv.DecoderTV;
 import br.net.gvt.efika.stealer.model.tv.request.DiagnosticoHpnaIn;
 import br.net.gvt.efika.stealer.service.conf_online.TVService;
 import br.net.gvt.efika.stealer.service.factory.FactoryStealerService;
@@ -40,16 +38,7 @@ import br.net.gvt.efika.util.thread.EfikaThread;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
-import org.apache.http.HttpHost;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
-import javax.json.JsonObject;
 import java.util.Calendar;
 
 public class CertificationServiceImpl implements CertificationService {
