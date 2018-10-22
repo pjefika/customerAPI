@@ -1,7 +1,7 @@
 package br.net.gvt.efika.customerAPI.rest.impl;
 
+import br.net.gvt.efika.customerAPI.model.entity.LogManobra;
 import br.net.gvt.efika.efika_customer.model.customer.EfikaCustomer;
-import br.net.gvt.efika.customerAPI.dao.mongo.FactoryDAO;
 import br.net.gvt.efika.customerAPI.rest.ApiResponseMessage;
 import br.net.gvt.efika.customerAPI.rest.CertificationApiService;
 import br.net.gvt.efika.customerAPI.model.CertificationResponse;
@@ -10,6 +10,8 @@ import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import br.net.gvt.efika.customerAPI.model.service.factory.FactoryService;
+
+import java.util.List;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2018-01-04T13:39:04.668Z")
 public class CertificationApiServiceImpl extends CertificationApiService {
@@ -33,7 +35,8 @@ public class CertificationApiServiceImpl extends CertificationApiService {
 
     @Override
     public Response findManobraByCustomer(EfikaCustomer body, SecurityContext securityContext) throws Exception {
-        return Response.ok().entity(FactoryService.manobraService().findManobraByCustomer(body)).build();
+        List<LogManobra> res = FactoryService.manobraService().findManobraByCustomer(body);
+        return Response.ok().entity(res).build();
     }
 
     @Override

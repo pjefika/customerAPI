@@ -1,6 +1,6 @@
 package br.net.gvt.efika.customerAPI.dao.manobra;
 
-import br.net.gvt.efika.customerAPI.model.entity.ManobraCertification;
+import br.net.gvt.efika.customerAPI.model.entity.LogManobra;
 import br.net.gvt.efika.efika_customer.model.customer.EfikaCustomer;
 
 import java.util.List;
@@ -13,6 +13,6 @@ import java.util.List;
  **/
 public interface ManobraDao {
 
-    public List<ManobraCertification> findManobraByCustomer(EfikaCustomer cust) throws Exception;
+    public List<LogManobra> findManobraByCustomer(EfikaCustomer cust) throws Exception;
 
 }

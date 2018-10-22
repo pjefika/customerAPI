@@ -32,14 +32,6 @@ public class CertificationApi {
         return delegate.findByCustomer(body, securityContext);
     }
 
-    @POST
-    @Path("/findManobraByCustomer")
-    @Produces({"application/json", "application/xml"})
-    public Response findMonobraByCustomer(EfikaCustomer body, @Context SecurityContext securityContext)
-            throws Exception {
-        return delegate.findManobraByCustomer(body, securityContext);
-    }
-
     @GET
     @Path("/{id}")
     @Produces({"application/json"})
@@ -80,5 +72,15 @@ public class CertificationApi {
     public Response setOntToOlt(GenericRequest body, SecurityContext securityContext) throws NotFoundException {
         return delegate.setOntToOlt(body, securityContext);
     }
+
+
+//    @POST
+//    @Path("/findManobraByCustomer")
+//    @Produces({"application/json", "application/xml"})
+//    public Response findMonobraByCustomer(EfikaCustomer body, @Context SecurityContext securityContext)
+//            throws Exception {
+//        Response res = delegate.findManobraByCustomer(body, securityContext);
+//        return res;
+//    }
 
 }

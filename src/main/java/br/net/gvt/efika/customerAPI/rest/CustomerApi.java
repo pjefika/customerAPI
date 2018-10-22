@@ -79,6 +79,9 @@ public class CustomerApi {
                         certification.getBlocks().add(hpnaBlock);
                     } catch (Exception e) {
                         hpnaBlock.setResultado(CertificationResult.OK);
+                        testeHpna = new TesteHpna();
+                        testeHpna.setSituacao("NOK");
+                        testeHpna.setMensagem("Não foi possível executar certificação! (Não houve retorno do COL)");
                         new CertifierHpnaCertificationImpl(testeHpna).certify(hpnaBlock);
                         certification.getBlocks().add(hpnaBlock);
                     }

@@ -18,7 +18,7 @@ import java.util.Date;
  * 41 9 9513-0230
  **/
 @Entity(value = "manobra", noClassnameStored = false)
-public class ManobraCertification {
+public class LogManobra {
 
     @Id
     @JsonSerialize(using = ToStringSerializer.class)
@@ -124,7 +124,7 @@ public class ManobraCertification {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("ManobraCertification{");
+        final StringBuilder sb = new StringBuilder("LogManobra{");
         sb.append("id=").append(id);
         sb.append(", instancia='").append(instancia).append('\'');
         sb.append(", designador='").append(designador).append('\'');

@@ -5,12 +5,8 @@
  */
 package br.net.gvt.efika.customerAPI.model.service.manobra;
 
-import br.net.gvt.efika.customerAPI.model.GenericRequest;
-import br.net.gvt.efika.customerAPI.model.entity.CustomerCertification;
-import br.net.gvt.efika.customerAPI.model.entity.ManobraCertification;
+import br.net.gvt.efika.customerAPI.model.entity.LogManobra;
 import br.net.gvt.efika.efika_customer.model.customer.EfikaCustomer;
-import br.net.gvt.efika.fulltest.model.fulltest.ValidacaoResult;
-import br.net.gvt.efika.fulltest.model.telecom.properties.gpon.SerialOntGpon;
 
 import java.util.List;
 
@@ -20,6 +16,6 @@ import java.util.List;
  */
 public interface ManobraService {
 
-    public List<ManobraCertification> findManobraByCustomer(EfikaCustomer cust) throws Exception;
+    public List<LogManobra> findManobraByCustomer(EfikaCustomer cust) throws Exception;
 
 }
