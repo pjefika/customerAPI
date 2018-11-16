@@ -1,6 +1,5 @@
 package br.net.gvt.efika.customerAPI.rest;
 
-import br.net.gvt.efika.customer.model.certification.CertificationAssert;
 import br.net.gvt.efika.customer.model.certification.CertificationBlock;
 import br.net.gvt.efika.customer.model.certification.enums.CertificationBlockName;
 import br.net.gvt.efika.customer.model.certification.enums.CertificationResult;
@@ -9,31 +8,22 @@ import br.net.gvt.efika.customerAPI.model.service.certification.command.LogComma
 import br.net.gvt.efika.customerAPI.model.service.certification.operator.CustomerCertificationOperator;
 import br.net.gvt.efika.customerAPI.model.service.certificator.impl.CertifierHpnaCertificationImpl;
 import br.net.gvt.efika.customerAPI.model.service.factory.FactoryCertificationBlock;
-import br.net.gvt.efika.customerAPI.model.service.factory.FactoryService;
 import br.net.gvt.efika.customerAPI.rest.factories.CertificationApiServiceFactory;
 import br.net.gvt.efika.customerAPI.rest.factories.CustomerApiServiceFactory;
 import br.net.gvt.efika.customerAPI.model.GenericRequest;
 import br.net.gvt.efika.efika_customer.model.customer.EfikaCustomer;
 import br.net.gvt.efika.fulltest.model.fulltest.ConfirmaLeituraInput;
-import br.net.gvt.efika.fulltest.model.fulltest.FullTest;
-import br.net.gvt.efika.fulltest.model.fulltest.Solucao;
 import br.net.gvt.efika.stealer.model.TesteHpna;
-import br.net.gvt.efika.stealer.model.tv.DecoderTV;
 import br.net.gvt.efika.stealer.model.tv.request.DiagnosticoHpnaIn;
 import br.net.gvt.efika.stealer.service.conf_online.TVService;
 import br.net.gvt.efika.stealer.service.factory.FactoryStealerService;
 import br.net.gvt.efika.util.thread.EfikaThread;
-import org.json.JSONArray;
 
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.*;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.List;
 
 @Path("/customer")
 @javax.annotation.Generated(value = "io.swagger.codegen.languages.JavaResteasyServerCodegen", date = "2018-01-04T13:39:04.668Z")
