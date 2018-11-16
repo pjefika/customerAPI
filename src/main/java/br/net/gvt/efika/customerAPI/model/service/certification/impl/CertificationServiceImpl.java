@@ -295,7 +295,7 @@ public class CertificationServiceImpl implements CertificationService {
         certification.setFulltest(fulltest);
         CustomerCertificationOperator.update(certification);
 //                        Thread.sleep(50000);
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 35; i++) {
             FullTest t = ftDAO.getById(fulltest.getOwner());
             certification.setFulltest(t);
             CustomerCertificationOperator.update(certification);

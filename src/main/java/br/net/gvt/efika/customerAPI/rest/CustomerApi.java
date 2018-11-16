@@ -14,16 +14,24 @@ import br.net.gvt.efika.customerAPI.rest.factories.CertificationApiServiceFactor
 import br.net.gvt.efika.customerAPI.rest.factories.CustomerApiServiceFactory;
 import br.net.gvt.efika.customerAPI.model.GenericRequest;
 import br.net.gvt.efika.efika_customer.model.customer.EfikaCustomer;
+import br.net.gvt.efika.fulltest.model.fulltest.ConfirmaLeituraInput;
+import br.net.gvt.efika.fulltest.model.fulltest.FullTest;
+import br.net.gvt.efika.fulltest.model.fulltest.Solucao;
 import br.net.gvt.efika.stealer.model.TesteHpna;
 import br.net.gvt.efika.stealer.model.tv.DecoderTV;
 import br.net.gvt.efika.stealer.model.tv.request.DiagnosticoHpnaIn;
 import br.net.gvt.efika.stealer.service.conf_online.TVService;
 import br.net.gvt.efika.stealer.service.factory.FactoryStealerService;
 import br.net.gvt.efika.util.thread.EfikaThread;
+import org.json.JSONArray;
+
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -40,6 +48,25 @@ public class CustomerApi {
     public Response findByParameter(GenericRequest body, @Context SecurityContext securityContext)
             throws NotFoundException {
         return delegate.findByParameter(body, securityContext);
+    }
+
+    @POST
+    @Path("/confirmaleitura")
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response confirmaLeitura(ConfirmaLeituraInput confirmaLeituraInput, @Context SecurityContext securityContext) throws Exception {
+        Response response = null;
+        CustomerCertification customerCertification = null;
+        try {
+            response = nDelegate.getCertificationById(confirmaLeituraInput.getFulltest(), securityContext);
+            customerCertification = (CustomerCertification) response.getEntity();
+            customerCertification.getFulltest().setLeituraConfirmada(true);
+            CustomerCertification certification = customerCertification;
+            //Salvar no banco
+            customerCertification = CustomerCertificationOperator.conclude(certification);
+            return Response.ok(customerCertification).build();
+        } catch (Exception e) {
+            return Response.ok(null).build();
+        }
     }
 
     @POST
