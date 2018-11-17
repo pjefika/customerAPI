@@ -62,14 +62,14 @@ public class CustomerApi {
     @POST
     @Path("/findByParameterTv")
     @Produces({"application/json", "application/xml"})
-    public Response findByParameterTv(GenericRequest body, @Context SecurityContext securityContext){
+    public Response findByParameterTv(GenericRequest body, @Context SecurityContext securityContext) {
         System.out.println("Oi");
         CustomerCertification customerCertification = null;
         Response response = null;
-        try{
+        try {
             response = nDelegate.getCertificationById(body.getParameter(), securityContext);
             customerCertification = (CustomerCertification) response.getEntity();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return Response.ok(e.getMessage()).build();
         }
@@ -96,6 +96,9 @@ public class CustomerApi {
                         certification.getBlocks().add(hpnaBlock);
                     } catch (Exception e) {
                         hpnaBlock.setResultado(CertificationResult.OK);
+                        testeHpna = new TesteHpna();
+                        testeHpna.setSituacao("NOK");
+                        testeHpna.setMensagem("Não foi possível executar certificação! (Não houve retorno do COL)");
                         new CertifierHpnaCertificationImpl(testeHpna).certify(hpnaBlock);
                         certification.getBlocks().add(hpnaBlock);
                     }
@@ -104,7 +107,7 @@ public class CustomerApi {
             threadHpna.join();
             customerCertification = CustomerCertificationOperator.conclude(certification);
             return Response.ok(customerCertification).build();
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             return Response.ok(e.getMessage()).build();
         }
