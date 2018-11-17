@@ -43,7 +43,7 @@ public class CertifierHpnaCertificationImpl extends CertifierCertificationBlockG
             }
             this.check();
         } else {
-            getBlock().concluir(CertificationResult.FORWARDED_CO, "Diagnóstico HPNA NOK.");
+            getBlock().concluir(CertificationResult.FORWARDED_CO, "Não foi possível obter Diagnóstico HPNA.");
         }
 
     }
