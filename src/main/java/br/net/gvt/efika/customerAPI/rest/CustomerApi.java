@@ -13,9 +13,11 @@ import br.net.gvt.efika.customerAPI.model.GenericRequest;
 import br.net.gvt.efika.efika_customer.model.customer.EfikaCustomer;
 import br.net.gvt.efika.fulltest.model.fulltest.ConfirmaLeituraInput;
 import br.net.gvt.efika.stealer.model.TesteHpna;
-import br.net.gvt.efika.stealer.model.tv.request.DiagnosticoHpnaIn;
+import br.net.gvt.efika.customerAPI.rest.badpractice.DiagnosticoHpnaIn;
 import br.net.gvt.efika.stealer.service.conf_online.TVService;
 import br.net.gvt.efika.stealer.service.factory.FactoryStealerService;
+import br.net.gvt.efika.util.dao.http.Urls;
+import br.net.gvt.efika.util.dao.http.factory.FactoryHttpDAOAbstract;
 import br.net.gvt.efika.util.json.JacksonMapper;
 import java.util.HashMap;
 
@@ -64,55 +66,51 @@ public class CustomerApi {
     @Produces({"application/json", "application/xml"})
     public Response findByParameterTv(GenericRequest body, @Context SecurityContext securityContext) {
         System.out.println("Oi");
-        return Response.ok().build();
-//        CustomerCertification customerCertification = null;
-//        Response response = null;
-//        try {
-//            response = nDelegate.getCertificationById(body.getParameter(), securityContext);
-//            customerCertification = (CustomerCertification) response.getEntity();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return Response.ok(e.getMessage()).build();
-//        }
-//
-//        EfikaCustomer cust = null;
-//        CustomerCertification certification = customerCertification;
-//        TVService tvDAO = FactoryStealerService.tvService();
-//        try {
-//
-//            System.out.println("EraThread");
-//            CertificationBlock hpnaBlock = null;
-//            TesteHpna testeHpna = null;
-//            try {
-//                hpnaBlock = FactoryCertificationBlock.createBlockByName(CertificationBlockName.HPNA);
-//
-//                DiagnosticoHpnaIn nN = new DiagnosticoHpnaIn(certification.getCustomer(), certification.getExecutor());
-//                HashMap<String, Object> map = new HashMap<>();
-//                map.put("executor", body.getExecutor());
-//                map.put("cust", certification.getCustomer());
-//                
-//                
-//
-//                DiagnosticoHpnaIn diagnosticoHpnaIn = nN;
-//                testeHpna = tvDAO.diagnosticoHpna(diagnosticoHpnaIn);
-//                hpnaBlock.setResultado(CertificationResult.OK);
-//                new CertifierHpnaCertificationImpl(testeHpna).certify(hpnaBlock);
-//                certification.getBlocks().add(hpnaBlock);
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//                hpnaBlock.setResultado(CertificationResult.OK);
-//                testeHpna = new TesteHpna();
-//                testeHpna.setSituacao("NOK");
-//                testeHpna.setMensagem("Não foi possível executar certificação! (Não houve retorno do COL)");
-//                new CertifierHpnaCertificationImpl(testeHpna).certify(hpnaBlock);
-//                certification.getBlocks().add(hpnaBlock);
-//            }
-//            System.out.println("testehpna -> " + new JacksonMapper(TesteHpna.class).serialize(testeHpna));
-//            customerCertification = CustomerCertificationOperator.conclude(certification);
-//            return Response.ok(customerCertification).build();
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            return Response.ok(e.getMessage()).build();
-//        }
+        CustomerCertification customerCertification = null;
+        Response response = null;
+        try {
+            response = nDelegate.getCertificationById(body.getParameter(), securityContext);
+            customerCertification = (CustomerCertification) response.getEntity();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.ok(e.getMessage()).build();
+        }
+
+        EfikaCustomer cust = null;
+        CustomerCertification certification = customerCertification;
+        TVService tvDAO = FactoryStealerService.tvService();
+        try {
+
+            System.out.println("EraThread");
+            CertificationBlock hpnaBlock = null;
+            TesteHpna testeHpna = null;
+            try {
+                hpnaBlock = FactoryCertificationBlock.createBlockByName(CertificationBlockName.HPNA);
+
+                DiagnosticoHpnaIn diagnosticoHpnaIn = new DiagnosticoHpnaIn(certification.getCustomer(), certification.getExecutor());
+
+                FactoryHttpDAOAbstract<TesteHpna> h = new FactoryHttpDAOAbstract(TesteHpna.class);
+
+                testeHpna = (TesteHpna) h.createWithoutProxy().post(Urls.DIAGNOSTICO_HPNA_STEALER.getUrl(), diagnosticoHpnaIn);
+                hpnaBlock.setResultado(CertificationResult.OK);
+                new CertifierHpnaCertificationImpl(testeHpna).certify(hpnaBlock);
+                certification.getBlocks().add(hpnaBlock);
+            } catch (Exception e) {
+                e.printStackTrace();
+                hpnaBlock.setResultado(CertificationResult.OK);
+                testeHpna = new TesteHpna();
+                testeHpna.setSituacao("NOK");
+                testeHpna.setMensagem("Não foi possível executar certificação! (Não houve retorno do COL)");
+                new CertifierHpnaCertificationImpl(testeHpna).certify(hpnaBlock);
+                certification.getBlocks().add(hpnaBlock);
+            }
+            System.out.println("testehpna -> " + new JacksonMapper(TesteHpna.class).serialize(testeHpna));
+            System.out.println("hpnaBlock -> " + new JacksonMapper(CertificationBlock.class).serialize(hpnaBlock));
+            customerCertification = CustomerCertificationOperator.conclude(certification);
+            return Response.ok(customerCertification).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return Response.ok(e.getMessage()).build();
+        }
     }
 }
