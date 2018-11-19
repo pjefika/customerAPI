@@ -149,6 +149,12 @@ public class CertificationServiceImpl implements CertificationService {
                              */
 
                             /*
+                            //Executa a certificacao e retorna o id
+                            https://qos-commands-api.youbora.com/ob-brazil/certification/execute_certifications/UniqueID/TV-SPO-814UD6B2TH-050
+                            //Retorno esperado
+                            [{"stb":"TV-SPO-814UD6B2TH-050","server":"DataHub - TVQoS Endpoint","id":"092645bdfa3994506868ab1b0","deadline":"2018-10-23T14:08:04Z","ok":true,"version":"1.0"}]
+                            //GET da certificacao do youbora
+                            https://qos-commands-api.youbora.com/ob-brazil/certification/get_certification/UniqueID/TV-SPO-814UD6B2TH-050
                             EfikaThread threadYoubora = new EfikaThread(new LogCommand(certification) {
                                 @Override
                                 public void run() {
