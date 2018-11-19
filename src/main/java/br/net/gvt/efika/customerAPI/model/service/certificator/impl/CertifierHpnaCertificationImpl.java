@@ -43,7 +43,13 @@ public class CertifierHpnaCertificationImpl extends CertifierCertificationBlockG
             }
             this.check();
         } else {
-            getBlock().concluir(CertificationResult.FORWARDED_CO, "Diagnóstico HPNA NOK.");
+            if(testeHpna.getSituacao().equalsIgnoreCase("OK")){
+                getBlock().concluir(CertificationResult.OK, testeHpna.getMensagem());
+            }else{
+                if(testeHpna.getMensagem() == null || testeHpna.getMensagem().isEmpty()) {
+                    getBlock().concluir(CertificationResult.OK, "Diagnóstico HPNA NOK.");
+                }
+            }
         }
 
     }
