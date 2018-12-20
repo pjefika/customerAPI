@@ -23,7 +23,6 @@ import br.net.gvt.efika.stealer.model.tv.request.DiagnosticoHpnaIn;
 import br.net.gvt.efika.stealer.service.conf_online.TVService;
 import br.net.gvt.efika.stealer.service.factory.FactoryStealerService;
 import br.net.gvt.efika.util.thread.EfikaThread;
-import org.json.JSONArray;
 
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
