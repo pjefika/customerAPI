@@ -5,10 +5,12 @@
  */
 package br.net.gvt.efika.customerAPI.model.service.certificator.impl;
 
+import br.net.gvt.efika.customer.model.certification.CertificationAssert;
 import br.net.gvt.efika.customer.model.certification.enums.CertificationAssertName;
 import br.net.gvt.efika.customer.model.certification.enums.CertificationResult;
 import br.net.gvt.efika.efika_customer.model.customer.EfikaCustomer;
 import br.net.gvt.efika.customerAPI.model.service.assertations.CustomerCertificationAsserter;
+import br.net.gvt.efika.customerAPI.model.service.assertations.exception.AssertNaoImpl;
 import br.net.gvt.efika.customerAPI.model.service.certification.command.NonExceptionCommand;
 
 public class CertifierCadastroCertificationImpl extends CertifierCertificationBlockGeneric {
@@ -29,7 +31,16 @@ public class CertifierCadastroCertificationImpl extends CertifierCertificationBl
                 new NonExceptionCommand() {
                     @Override
                     public void run() throws Exception {
-                        CertifierCadastroCertificationImpl.this.getBlock().getAsserts().add(new CustomerCertificationAsserter().assertCertification(value, CertifierCadastroCertificationImpl.this.customer));
+                        try {
+                            CertifierCadastroCertificationImpl.this.getBlock().getAsserts().add(
+                                    new CustomerCertificationAsserter().assertCertification(value, CertifierCadastroCertificationImpl.this.customer));
+                        } catch (Exception e) {
+                            if (!(e instanceof AssertNaoImpl)) {
+                                CertifierCadastroCertificationImpl.this.getBlock().getAsserts().add(
+                                        new CertificationAssert(value, CertificationResult.FORWARDED_CO, "Falha ao validar cadastro."));
+                            }
+                        }
+
                     }
                 };
             }

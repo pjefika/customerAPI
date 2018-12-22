@@ -5,9 +5,11 @@
  */
 package br.net.gvt.efika.customerAPI.model.service.certificator.impl;
 
+import br.net.gvt.efika.customer.model.certification.CertificationAssert;
 import br.net.gvt.efika.customer.model.certification.enums.CertificationAssertName;
 import br.net.gvt.efika.customer.model.certification.enums.CertificationResult;
 import br.net.gvt.efika.customerAPI.model.service.assertations.FulltestCertificationAsserter;
+import br.net.gvt.efika.customerAPI.model.service.assertations.exception.AssertNaoImpl;
 import br.net.gvt.efika.customerAPI.model.service.certification.command.NonExceptionCommand;
 import br.net.gvt.efika.fulltest.model.fulltest.FullTest;
 
@@ -29,7 +31,14 @@ public class CertifierPerformanceCertificationImpl extends CertifierCertificatio
                 new NonExceptionCommand() {
                     @Override
                     public void run() throws Exception {
-                        CertifierPerformanceCertificationImpl.this.getBlock().getAsserts().add(new FulltestCertificationAsserter().assertCertification(value, CertifierPerformanceCertificationImpl.this.fulltest));
+                        try {
+                            CertifierPerformanceCertificationImpl.this.getBlock().getAsserts().add(new FulltestCertificationAsserter().assertCertification(value, CertifierPerformanceCertificationImpl.this.fulltest));
+                        } catch (Exception e) {
+                            if (!(e instanceof AssertNaoImpl)) {
+                                CertifierPerformanceCertificationImpl.this.getBlock().getAsserts().add(
+                                        new CertificationAssert(value, CertificationResult.FORWARDED_CO, "Falha ao validar performance."));
+                            }
+                        }
                     }
                 };
             }

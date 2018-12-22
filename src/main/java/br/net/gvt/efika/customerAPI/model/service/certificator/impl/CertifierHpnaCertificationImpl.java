@@ -5,6 +5,7 @@
  */
 package br.net.gvt.efika.customerAPI.model.service.certificator.impl;
 
+import br.net.gvt.efika.customer.model.certification.CertificationAssert;
 import br.net.gvt.efika.customer.model.certification.enums.CertificationAssertName;
 import br.net.gvt.efika.customer.model.certification.enums.CertificationResult;
 import br.net.gvt.efika.customerAPI.model.service.assertations.HpnaCertificationAsserter;
@@ -34,9 +35,11 @@ public class CertifierHpnaCertificationImpl extends CertifierCertificationBlockG
                     @Override
                     public void run() {
                         try {
-                            CertifierHpnaCertificationImpl.this.getBlock().getAsserts().add(new HpnaCertificationAsserter().assertCertification(value, CertifierHpnaCertificationImpl.this.testeHpna));
+                            CertifierHpnaCertificationImpl.this.getBlock().getAsserts().add(
+                                    new HpnaCertificationAsserter().assertCertification(value, CertifierHpnaCertificationImpl.this.testeHpna));
                         }catch (Exception e){
-                            e.printStackTrace();
+                            CertifierHpnaCertificationImpl.this.getBlock().getAsserts().add(
+                                        new CertificationAssert(value, CertificationResult.FORWARDED_CO, "Falha ao validar HPNA."));
                         }
                     }
                 };

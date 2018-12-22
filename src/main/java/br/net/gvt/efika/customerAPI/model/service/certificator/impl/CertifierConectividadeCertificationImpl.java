@@ -5,9 +5,11 @@
  */
 package br.net.gvt.efika.customerAPI.model.service.certificator.impl;
 
+import br.net.gvt.efika.customer.model.certification.CertificationAssert;
 import br.net.gvt.efika.customer.model.certification.enums.CertificationAssertName;
 import br.net.gvt.efika.customer.model.certification.enums.CertificationResult;
 import br.net.gvt.efika.customerAPI.model.service.assertations.FulltestCertificationAsserter;
+import br.net.gvt.efika.customerAPI.model.service.assertations.exception.AssertNaoImpl;
 import br.net.gvt.efika.customerAPI.model.service.certification.command.NonExceptionCommand;
 import br.net.gvt.efika.fulltest.model.fulltest.FullTest;
 
@@ -29,7 +31,15 @@ public class CertifierConectividadeCertificationImpl extends CertifierCertificat
                 new NonExceptionCommand() {
                     @Override
                     public void run() throws Exception {
-                        CertifierConectividadeCertificationImpl.this.getBlock().getAsserts().add(new FulltestCertificationAsserter().assertCertification(value, CertifierConectividadeCertificationImpl.this.fulltest));
+                        try {
+                            CertifierConectividadeCertificationImpl.this.getBlock().getAsserts().add(
+                                    new FulltestCertificationAsserter().assertCertification(value, CertifierConectividadeCertificationImpl.this.fulltest));
+                        } catch (Exception e) {
+                            if (!(e instanceof AssertNaoImpl)) {
+                                CertifierConectividadeCertificationImpl.this.getBlock().getAsserts().add(
+                                        new CertificationAssert(value, CertificationResult.FORWARDED_CO, "Falha ao validar conectividade."));
+                            }
+                        }
                     }
                 };
             }

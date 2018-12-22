@@ -5,9 +5,11 @@
  */
 package br.net.gvt.efika.customerAPI.model.service.certificator.impl;
 
+import br.net.gvt.efika.customer.model.certification.CertificationAssert;
 import br.net.gvt.efika.customer.model.certification.enums.CertificationAssertName;
 import br.net.gvt.efika.customer.model.certification.enums.CertificationResult;
 import br.net.gvt.efika.customerAPI.model.service.assertations.HpnaCertificationAsserter;
+import br.net.gvt.efika.customerAPI.model.service.assertations.exception.AssertNaoImpl;
 import br.net.gvt.efika.customerAPI.model.service.certification.command.NonExceptionCommand;
 import br.net.gvt.efika.stealer.model.TesteHpna;
 import br.net.gvt.efika.stealer.model.tv.DecoderTV;
@@ -33,7 +35,16 @@ public class CertifierYouboraCertificationImpl extends CertifierCertificationBlo
                 new NonExceptionCommand() {
                     @Override
                     public void run() throws Exception {
-                        CertifierYouboraCertificationImpl.this.getBlock().getAsserts().add(new HpnaCertificationAsserter().assertCertification(value, CertifierYouboraCertificationImpl.this.testeHpna));
+                        try {
+                            CertifierYouboraCertificationImpl.this.getBlock().getAsserts().add(
+                                    new HpnaCertificationAsserter().assertCertification(value, CertifierYouboraCertificationImpl.this.testeHpna));
+                        } catch (Exception e) {
+                            if (!(e instanceof AssertNaoImpl)) {
+                                CertifierYouboraCertificationImpl.this.getBlock().getAsserts().add(
+                                        new CertificationAssert(value, CertificationResult.FORWARDED_CO, "Falha ao validar Youbora."));
+                            }
+                        }
+
                     }
                 };
             }

@@ -9,7 +9,6 @@ import br.net.gvt.efika.customer.model.certification.CertificationAssert;
 import br.net.gvt.efika.customer.model.certification.enums.CertificationAssertName;
 import static br.net.gvt.efika.customer.model.certification.enums.CertificationAssertName.*;
 import br.net.gvt.efika.customer.model.certification.enums.CertificationResult;
-import br.net.gvt.efika.customerAPI.model.service.assertations.exception.AssertNaoImpl;
 import br.net.gvt.efika.fulltest.model.fulltest.ValidacaoResult;
 import br.net.gvt.efika.stealer.model.TesteHpna;
 import br.net.gvt.efika.stealer.model.tv.DecoderTV;
@@ -22,7 +21,6 @@ public class HpnaCertificationAsserter extends CertificationAsserterAbs<TesteHpn
 
     @Override
     public CertificationAssert assertCertification(CertificationAssertName name, TesteHpna testeHpna) throws Exception {
-        try {
             List<DecoderTV> stbs = testeHpna.getStbs();
             if(testeHpna.getSituacao().equalsIgnoreCase("OK") &&
                     testeHpna.getMensagem().equalsIgnoreCase("Não foi possivel validar todos os dispositivos !")){
@@ -132,15 +130,12 @@ public class HpnaCertificationAsserter extends CertificationAsserterAbs<TesteHpn
                             orientacao = badStbs.length() > 1 ? "Diagnóstico HPNA OK" : "Diagnóstico HPNA NOK no(s) STB(s) " + badStbs;
                             result = badStbs.length() > 1 ? CertificationResult.OK : CertificationResult.OK;
                         }
-                        throw new AssertNaoImpl();
+//                        throw new AssertNaoImpl();
                 }
             }
 
             return new CertificationAssert(certName, result, orientacao);
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new AssertNaoImpl();
-        }
+        
     }
 
 // ExceptionLog
