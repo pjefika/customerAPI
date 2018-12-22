@@ -21,6 +21,8 @@ import br.net.gvt.efika.util.dao.http.factory.FactoryHttpDAOAbstract;
 import br.net.gvt.efika.util.json.JacksonMapper;
 import java.util.HashMap;
 
+import br.net.gvt.efika.util.thread.EfikaThread;
+
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
