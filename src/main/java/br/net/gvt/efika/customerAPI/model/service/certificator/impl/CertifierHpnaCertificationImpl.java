@@ -27,7 +27,7 @@ public class CertifierHpnaCertificationImpl extends CertifierCertificationBlockG
 
     @Override
     protected void process() {
-        if (stbs != null) {
+        if (testeHpna.getStbs() != null) {
             for (CertificationAssertName value : getAsserts()) {
                 System.out.println("nNome: " + value);
                 new NonExceptionCommand() {
@@ -35,7 +35,7 @@ public class CertifierHpnaCertificationImpl extends CertifierCertificationBlockG
                     public void run() {
                         try {
                             CertifierHpnaCertificationImpl.this.getBlock().getAsserts().add(new HpnaCertificationAsserter().assertCertification(value, CertifierHpnaCertificationImpl.this.testeHpna));
-                        }catch (Exception e){
+                        } catch (Exception e) {
                             e.printStackTrace();
                         }
                     }
