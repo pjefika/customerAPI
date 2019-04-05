@@ -45,10 +45,10 @@ public class CertificationApi {
     @Produces({"application/json"})
     public Response getCertificationById(@PathParam("id") String id, @Context SecurityContext securityContext)
             throws NotFoundException {
-        System.out.println("-----------------------------------------------------");
+//        System.out.println("-----------------------------------------------------");
         CustomerCertification cC = (CustomerCertification) delegate.getCertificationById(id, securityContext).getEntity();
-        System.out.println(cC.getExecutor());
-        System.out.println("-----------------------------------------------------");
+//        System.out.println(cC.getExecutor());
+//        System.out.println("-----------------------------------------------------");
         return delegate.getCertificationById(id, securityContext);
     }
 

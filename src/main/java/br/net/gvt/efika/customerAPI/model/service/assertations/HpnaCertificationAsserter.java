@@ -27,7 +27,7 @@ public class HpnaCertificationAsserter extends CertificationAsserterAbs<TesteHpn
                 orientacao = testeHpna.getMensagem();
                 result = CertificationResult.OK;
             }else {
-                System.out.println("nome: " + name);
+//                System.out.println("nome: " + name);
                 certName = name;
                 switch (name) {
                     case IS_DIAG_HPNA_OK:
